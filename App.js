@@ -1,20 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import CreateWallet from './src/components/CreateWallet';
+import AppProvider from './src/providers/store';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './src/providers/AppNavigator';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <AppProvider>
+        <AppNavigator />
+      </AppProvider>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
