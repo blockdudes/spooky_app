@@ -98,6 +98,7 @@ const UserWalletScreen = () => {
                         </View>
                         <View className="flex flex-row justify-around">
                             <CreditDelegation />
+                            <BorrowModal/>
                         </View>
 
 
@@ -107,7 +108,7 @@ const UserWalletScreen = () => {
                 </View>
 
 
-                <View className="flex flex-col h-[40vh] px-3 gap-3">
+                {/* <View className="flex flex-col h-[40vh] px-3 gap-3">
                     <View className="flex pl-2 flex-row space-x-8 items-center">
                         <TouchableOpacity className={`${activeTab === 'Activity' ? 'border-b-2 border-[#7264FF]' : ''} pb-2`} onPress={() => setActiveTab('Activity')}>
                             <Text className="text-lg tracking-wider  text-white">Activity</Text>
@@ -184,7 +185,7 @@ const UserWalletScreen = () => {
                             }
                         </ScrollView>
                     </View>
-                </View>
+                </View> */}
             </SafeAreaView>
         </View>
     )

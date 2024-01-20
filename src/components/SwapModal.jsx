@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useRef, useState, useEffect } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView, Dimensions } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,14 +10,17 @@ import { getOut } from '../utils/swap_token';
 import { wethAddress, ghoToken } from "../utils/contracts";
 import { ethers } from 'ethers';
 import { swapETHForExactTokens, swapTokensForEth } from '../utils/swap_token';
+import { errorToast, successToast } from '../config/CallToast';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from '../config/toastConfig';
 
 
 
 const SwapModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [getOutPrice, setGetOutPrice] = useState(0);
-  const [isLoading,setIsLoading]=useState(false)
-  const { selectedPayToken, ethPrice, ghoPrice, setSelectedPayToken, selectedRecieveToken, setSelectedRecieveToken, setActiveTask, panelRef, swapData, setSwapData, routerContract, signer } = useContext(ContextApi)
+  const [isLoading, setIsLoading] = useState(false)
+  const { selectedPayToken, ethPrice, ghoPrice, setSelectedPayToken, selectedRecieveToken, setSelectedRecieveToken, setActiveTask, panelRef, swapData, setSwapData, routerContract, signer, ghoContract } = useContext(ContextApi)
 
 
   useEffect(() => {
@@ -49,26 +52,50 @@ const SwapModal = () => {
   }, [swapData])
 
   const swapEthToGho = async () => {
+    setIsLoading(true)
     try {
-     await swapETHForExactTokens(
+      const txn=await swapETHForExactTokens(
+        ghoContract,
         routerContract,
         swapData.amountToPay,
         getOutPrice,
         signer.address
       )
+      if(txn){
+        setIsLoading(false)
+        successToast("Token swapped successfully")
+      }
     } catch (error) {
+      setIsLoading(false)
       console.log(error)
+      errorToast(error.message)
     }
   }
 
 
   const swapGhoToEth = async () => {
-    await swapTokensForEth(
-      routerContract,
-      swapData.amountToPay,
-      getOutPrice,
-      signer.address
-    )
+
+    try {
+      setIsLoading(true)
+      const txn = await swapTokensForEth(
+        ghoContract,
+        routerContract,
+        swapData.amountToPay,
+        getOutPrice,
+        signer.address
+      )
+      if (txn) {
+        setIsLoading(false)
+        successToast("Token swapped successfully")
+      }
+
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error)
+      errorToast(error.message)
+
+    }
+
   }
 
   const swap = () => {
@@ -98,6 +125,8 @@ const SwapModal = () => {
         >
 
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
+          <Toast position='bottom' bottomOffset={80} config={toastConfig} />
+
 
 
             {/* top div */}
@@ -210,15 +239,25 @@ const SwapModal = () => {
                         value={swapData.amountToReceive}
                         onChangeText={(text)=>setSwapData({...swapData,amountToReceive:text})}
                       /> */}
-                      <Text className="text-white text-xl  max-w-[150px]">{swapData.amountToPay && getOutPrice}</Text>
-                      <Text className="text-[#9fa1a3]">${selectedRecieveToken.symbol === "ETH" ? Number(swapData.amountToReceive || 0) * ethPrice : Number(swapData.amountToReceive || 0) * ghoPrice}</Text>
+                      <Text className="text-white text-lg  max-w-[150px]">{swapData.amountToPay && getOutPrice}</Text>
+                      {/* <Text className="text-[#9fa1a3]">${selectedRecieveToken.symbol === "ETH" ? Number(swapData.amountToReceive || 0) * ethPrice : Number(swapData.amountToReceive || 0) * ghoPrice}</Text> */}
                     </View>
                   </View>
                 </View>
               </View>
-              <TouchableOpacity className=" rounded-[30px] mt-8  bg-[#9fa1a3] py-4" onPress={() => { swap() }}>
+              {
+                isLoading ? (
+                  <TouchableOpacity className=" rounded-[30px] mt-8 space-x-4 flex flex-row justify-center  bg-[#9fa1a3] py-4">
+                    <ActivityIndicator size="small" color="#10131a" />
+                <Text className="text-xl text-center font-semibold   text-[#10131a]">Swaping...</Text>
+              </TouchableOpacity>
+
+                ):(
+                  <TouchableOpacity className=" rounded-[30px] mt-8  bg-[#9fa1a3] py-4" onPress={() => { swap() }}>
                 <Text className="text-xl text-center font-semibold   text-[#10131a]">Swap</Text>
               </TouchableOpacity>
+                )
+              }
 
             </View>
 

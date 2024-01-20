@@ -10,6 +10,8 @@ import { borrow } from '../utils/borrow_token';
 import { errorToast, successToast } from '../config/CallToast';
 import { toastConfig } from '../config/toastConfig';
 import Toast from "react-native-toast-message"
+import { FontAwesome } from '@expo/vector-icons';
+
 
 
 
@@ -25,9 +27,9 @@ const BorrowModal = () => {
     setIsLoading(true)
     try {
     const txnRes=await borrow(userWalletData.publicAddress,payAmount,signer,sendAddress)
-    const reciept=await txnRes.wait()
+    
     setIsLoading(false)
-    if(reciept){
+    if(txnRes){
 
       successToast("Token borrowed successfully")
     }
@@ -45,6 +47,12 @@ const BorrowModal = () => {
     <SafeAreaView>
 
       <View>
+      <View className="flex items-center space-y-2 mr-4">
+          <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setBorrowModalVisible(true)}>
+          <FontAwesome name="credit-card" size={20} color="white" />
+          </TouchableOpacity>
+          <Text className="text-white  ">Borrow</Text>
+        </View>
         <Modal
           animationType="slide"
           transparent={false}

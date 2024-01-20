@@ -26,7 +26,9 @@ const RepayModal = () => {
       const txnRes=await repayTx(userWalletData.publicAddress,repayData.amount,signer)
       const reciept=await txnRes.wait()
       setIsLoading(false)
-      successToast("Token repay successfully")
+      if(reciept){
+        successToast("Token repay successfully")
+      }
     } catch (error) {
       setIsLoading(false)
       console.log(error) 

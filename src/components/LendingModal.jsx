@@ -44,7 +44,6 @@ const LendingModal = () => {
     }
   }
 
-  console.log("lendData--->", lendData)
 
   const handleLendBtn = () => {
     console.log("hello-->", selectedLendToken.symbol)

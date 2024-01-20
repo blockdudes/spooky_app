@@ -5,9 +5,10 @@ import { ethers } from "ethers";
 import axios from "axios"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { provider } from "../utils/contracts";
-import { ghoToken, routerAddress } from "../utils/contracts";
+import { ghoToken, routerAddress, ghoDebtToken } from "../utils/contracts";
 import { GHO_ABI } from "../Abis/gho_token_abi";
 import { UNISWAP_ROUTER_ABI } from "../Abis/uniswap_v2_router";
+import { GHO_DEPT_TOKEN_ABI } from "../Abis/gho_debtToken_abi";
 export const ContextApi = createContext();
 
 
@@ -39,6 +40,7 @@ const AppProvider = ({ children }) => {
   const[ghoPrice,setGhoPrice] = useState(0)
   const [ghoPriceEth,setGhoPriceEth] = useState(0)
   const ghoContract = new ethers.Contract(ghoToken, GHO_ABI, signer);
+  const ghoDebtContract = new ethers.Contract(ghoDebtToken, GHO_DEPT_TOKEN_ABI, signer)
   const routerContract = new ethers.Contract(routerAddress, UNISWAP_ROUTER_ABI, signer);
   const [sendTokenData,setSendTokenData] = useState({
     amount:"0",
@@ -182,7 +184,8 @@ useEffect(() => {
       routerContract,
       creditData,
       setCreditData,
-      ghoPriceEth
+      ghoPriceEth,
+      ghoDebtContract
       
       }}>
       {children}
