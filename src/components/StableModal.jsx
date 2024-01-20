@@ -1,33 +1,30 @@
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView, Dimensions } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import SheetModal from './SheetModal';
-import { ContextApi } from '../providers/store';
+import { FontAwesome } from '@expo/vector-icons';
 
 
 
-
-
-
-
-const SwapModal = () => {
+const StableModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { selectedPayToken,ethPrice,ghoPrice, setSelectedPayToken, selectedRecieveToken, setSelectedRecieveToken, setActiveTask, panelRef,swapData,setSwapData } = useContext(ContextApi)
+  const [payAmount, setPayAmount] = useState("0")
+  console.log(payAmount)
 
-  console.log(swapData )
+
+
   return (
     <SafeAreaView>
 
       <View>
         <View className="flex items-center space-y-2 mr-4">
 
-          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <Entypo name="wallet" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+            <FontAwesome name="money" size={25} color="white" />
           </TouchableOpacity>
-          <Text className="text-white ">Swap</Text>
+          <Text className="text-white  ">Stablize</Text>
         </View>
 
         <Modal
@@ -47,7 +44,7 @@ const SwapModal = () => {
                   <Entypo name="chevron-small-left" size={30} color="white" />
                 </View>
               </TouchableOpacity>
-              <Text className="text-white text-center text-lg semibold">Swap Tokens</Text>
+              <Text className="text-white text-center text-lg semibold">Stabilize your token</Text>
               <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
 
                 <AntDesign name="scan1" size={20} color="white" />
@@ -59,34 +56,31 @@ const SwapModal = () => {
 
                 <View className="flex flex-col border border-[#9fa1a3]/20 rounded-3xl space-y-1 bg-[#10131A] h-[50%] p-4">
                   <View className="flex flex-row justify-between ">
-                    <TouchableOpacity onPress={() => {
-                      setActiveTask("pay")
-                      panelRef.current.togglePanel()
-                    }}>
+                    <TouchableOpacity>
                       <View className="flex items-center space-x-3 flex-row  py-2 rounded-2xl">
                         <Image
                           className="h-[40px] rounded-2xl  w-[40px] object-cover self-center"
                           source={{
-                            uri: selectedPayToken?.logo,
+                            uri: 'https://logowik.com/content/uploads/images/ethereum3649.jpg',
                           }}
                         />
 
                         <View className="flex flex-col ">
-                          <Text className="text-white text-xl">{selectedPayToken.symbol}</Text>
-                          <Text className="text-[#9fa1a3]">{selectedPayToken.name}</Text>
+                          <Text className="text-white text-xl">ETH</Text>
+                          <Text className="text-[#9fa1a3]">Ethereum</Text>
                         </View>
 
                       </View>
                     </TouchableOpacity>
-                    {/* <View className="flex flex-col items-end gap-2">
+                    <View className="flex flex-col items-end gap-2">
                       <TextInput
                         className="text-white text-xl  max-w-[150px]"
-                        
-                        
+                        onChangeText={setPayAmount}
+                        value={payAmount}
                         keyboardType="numeric"
                       />
                       <Text className="text-[#9fa1a3]">$0.00</Text>
-                    </View> */}
+                    </View>
                   </View>
                   {/* //youpay div */}
                   <View className="flex flex-row items-center justify-between">
@@ -94,11 +88,11 @@ const SwapModal = () => {
                     <View className="flex flex-col items-end gap-2">
                       <TextInput
                         className="text-white text-xl  max-w-[150px]"
-                        onChangeText={(text)=>setSwapData({...swapData,amountToPay:text})}
-                        value={swapData.amountToPay}
+                        onChangeText={setPayAmount}
+                        value={payAmount}
                         keyboardType="numeric"
                       />
-                      <Text className="text-[#9fa1a3]">${selectedPayToken.symbol==="ETH" ? Number(swapData.amountToPay || 0)*ethPrice : Number(swapData.amountToPay || 0)*ghoPrice}</Text>
+                      <Text className="text-[#9fa1a3]">$0.00</Text>
                     </View>
                   </View>
                 </View>
@@ -110,32 +104,29 @@ const SwapModal = () => {
 
                 <View className="flex flex-col border border-[#9fa1a3]/20 rounded-3xl space-y-1 bg-[#10131A] h-[50%] p-4">
                   <View className="flex flex-row justify-between ">
-                    <TouchableOpacity onPress={() => {
-                      setActiveTask("recieve")
-                      panelRef.current.togglePanel()
-                    }}>
-                      <View className="flex items-center space-x-3 flex-row  py-2 rounded-2xl">
-                        <Image
-                          className="h-[40px] rounded-2xl  w-[40px] object-cover self-center"
-                          source={{
-                            uri: selectedRecieveToken?.logo,
-                          }}
-                        />
+                    <View className="flex items-center space-x-3 flex-row  py-2 rounded-2xl">
+                      <Image
+                        className="h-[40px] rounded-2xl  w-[40px] object-cover self-center"
+                        source={{
+                          uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png',
+                        }}
+                      />
 
-                        <View className="flex flex-col ">
-                          <Text className="text-white text-xl">{selectedRecieveToken.symbol}</Text>
-                          <Text className="text-[#9fa1a3]">{selectedRecieveToken.name}</Text>
-                        </View>
-
+                      <View className="flex flex-col ">
+                        <Text className="text-white text-xl">ETH</Text>
+                        <Text className="text-[#9fa1a3]">Ethereum</Text>
                       </View>
-                    </TouchableOpacity>
-                    {/* <View className="flex flex-col items-end gap-2">
+
+                    </View>
+                    <View className="flex flex-col items-end gap-2">
                       <TextInput
                         className="text-white text-xl  max-w-[150px]"
+                        onChangeText={setPayAmount}
+                        value={payAmount}
                         keyboardType="numeric"
                       />
                       <Text className="text-[#9fa1a3]">$0.00</Text>
-                    </View> */}
+                    </View>
                   </View>
                   {/* //youpay div */}
                   <View className="flex flex-row items-center justify-between">
@@ -143,11 +134,11 @@ const SwapModal = () => {
                     <View className="flex flex-col items-end gap-2">
                       <TextInput
                         className="text-white text-xl  max-w-[150px]"
+                        onChangeText={setPayAmount}
+                        value={payAmount}
                         keyboardType="numeric"
-                        value={swapData.amountToReceive}
-                        onChangeText={(text)=>setSwapData({...swapData,amountToReceive:text})}
                       />
-                      <Text className="text-[#9fa1a3]">${selectedRecieveToken.symbol==="ETH" ? Number(swapData.amountToReceive || 0)*ethPrice : Number(swapData.amountToReceive || 0)*ghoPrice}</Text>
+                      <Text className="text-[#9fa1a3]">$0.00</Text>
                     </View>
                   </View>
                 </View>
@@ -157,15 +148,24 @@ const SwapModal = () => {
               </TouchableOpacity>
 
             </View>
-
           </View>
 
-          <SheetModal />
         </Modal>
+
+
+
       </View>
+
+
     </SafeAreaView>
 
   );
 };
 
-export default SwapModal;
+export default StableModal;
+
+
+
+
+
+

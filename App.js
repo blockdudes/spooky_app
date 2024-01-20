@@ -10,7 +10,9 @@ export default function App() {
     <NavigationContainer>
       <AppProvider>
         <AppNavigator />
+
       </AppProvider>
     </NavigationContainer>
+    
   );
 }

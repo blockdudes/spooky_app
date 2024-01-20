@@ -18,7 +18,7 @@ const SwapUiComponent = () => {
     };
 
     return (
-        <View className="flex-1 p-4" >
+        <View className="bg-zinc-900" >
             <View className="flex-1">
 
                 <TextInput
