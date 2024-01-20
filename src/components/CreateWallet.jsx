@@ -4,12 +4,14 @@ import { ContextApi } from '../providers/store'
 import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { user_pvt_key } from '../utils/contracts';
 
 
 const CreateWallet = () => {
   const {setUserWalletData,userWalletData} = useContext(ContextApi);
   const [isLoading, setIsloading] = useState(false)
   const navigation = useNavigation();
+  // console.log(user_pvt_key)
   
   const goToUserWalletScreen = () => {
     setIsloading(true)

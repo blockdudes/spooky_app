@@ -9,56 +9,26 @@ import QrScannerModal from './QrScannerModal';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '../config/toastConfig';
 import SheetModal from './SheetModal';
-import { ContextApi } from '../providers/store';
-import { errorToast, successToast } from '../config/CallToast';
+import { ContextApi, supportedTokens } from '../providers/store';
+import { successToast } from '../config/CallToast';
 import { sendEth, sendGho } from '../utils/send_token';
 import { provider } from '../utils/contracts';
+import { approveCreditDelegation } from '../utils/lend_tokens';
 
 
 
-const PayModal = () => {
+const CreditDelegation = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [isLoading,setIsLoading]=useState(false)
-
-  const { signer, ethPrice, ghoPrice, panelRef, selectedSendToken, setSendTokenData, sendTokenData, ghoContract } = useContext(ContextApi)
-
-
-
-  const sendEthToken = async () => {
-    setIsLoading(true)
+  const { signer,ethPrice,ghoPrice,panelRef, selectedSendToken, setSendTokenData, sendTokenData, ghoContract,setCreditData,creditData } = useContext(ContextApi)
+  
+  const creditDelegate=async()=>{
     try {
-      const txnRes = await sendEth(signer, sendTokenData.sendTo, sendTokenData.amount.toString())
-      setIsLoading(false)
-      successToast("Token sent successfully")
+      const txn =await approveCreditDelegation(creditData.delegeteeAddress,creditData.amount)
+      
     } catch (error) {
-      setIsLoading(false)
-      console.log(error)
-      errorToast(error.message)
       
     }
   }
-
-  const sendGhoToken = async () => {
-      setIsLoading(true)
-    try {
-      const txnRes = await sendGho(signer, ghoContract, sendTokenData.sendTo, sendTokenData.amount.toString())
-      setIsLoading(false)
-      successToast("Token sent successfully")
-    } catch (error) {
-      setIsLoading(false)
-      console.log(error)
-      errorToast(error.message)
-    }
-  }
-
-  const handleSendTokenBtn = () => {
-    if (selectedSendToken.symbol === "ETH") {
-      sendEthToken()
-    } else {
-      sendGhoToken()
-    }
-  }
-
 
   return (
     <SafeAreaView>
@@ -68,7 +38,7 @@ const PayModal = () => {
           <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
             <FontAwesome name="send" size={25} color="white" />
           </TouchableOpacity>
-          <Text className="text-white  ">Send</Text>
+          <Text className="text-white  ">Delegate</Text>
         </View>
 
         <Modal
@@ -87,7 +57,7 @@ const PayModal = () => {
                   <Entypo name="chevron-small-left" size={30} color="white" />
                 </View>
               </TouchableOpacity>
-              <Text className="text-white text-center text-lg semibold">Send Token</Text>
+              <Text className="text-white text-center text-lg semibold">Credit Delegation</Text>
               <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
                 <QrScannerModal />
               </View>
@@ -101,60 +71,50 @@ const PayModal = () => {
                 <View className="flex flex-col space-y-2 mt-4 items-center">
                   <TextInput
                     className="text-[#ffffff] text-4xl"
-                    onChangeText={(text) => setSendTokenData({ ...sendTokenData, amount: text })}
+                    onChangeText={(text) => setCreditData({ ...creditData, amount: text })}
                     // onChange={(e) => setSendTokenData({...sendTokenData,amount:e.nativeEvent.text})}
-                    value={sendTokenData.amount}
+                    value={creditData.amount}
                     keyboardType="numeric"
                     placeholder='0.0'
                     placeholderTextColor={'#9fa1a3'}
                   />
-                  <Text className="text-[#9fa1a3]">${selectedSendToken.symbol === "ETH" ? Number(sendTokenData.amount || 0) * ethPrice : Number(sendTokenData.amount || 0) * ghoPrice}</Text>
+                  <Text className="text-[#9fa1a3]">${selectedSendToken.symbol==="ETH" ? Number(sendTokenData.amount || 0)*ethPrice : Number(sendTokenData.amount || 0)*ghoPrice}</Text>
                 </View>
 
                 {/* select token div */}
-                <TouchableOpacity onPress={() => {
-                  panelRef.current.togglePanel()
-                }}>
-                  <View className=" border border-[#9fa1a3]/20 flex items-center justify-between space-x-3 flex-row px-6 py-2 h-[60px] rounded-[30px]" >
+                  <View className="  flex items-center justify-center space-x-3 flex-row px-6 py-2 h-[60px] rounded-[30px]" >
                     <View className="flex flex-row items-center gap-2">
                       <Image
                         className="h-[35px] rounded-full  w-[35px] object-cover self-center"
                         source={{
-                          uri: selectedSendToken.logo,
+                          uri: supportedTokens[1].logo,
                         }}
                       />
-                      <Text className="text-white text-xl">{selectedSendToken.symbol}</Text>
-                      <Text className="text-[#9fa1a3]">{selectedSendToken.name}</Text>
+                      <Text className="text-white text-xl">{supportedTokens[1].symbol}</Text>
+                      <Text className="text-[#9fa1a3]">{supportedTokens[1].name}</Text>
                     </View>
-                    <Entypo name="chevron-small-down" size={35} color="#ffffff" />
+                    {/* <Entypo name="chevron-small-down" size={35} color="#ffffff" /> */}
                   </View>
-                </TouchableOpacity>
 
                 {/* address div */}
                 <View>
                   <TextInput
                     className="text-[#ffffff] border border-[#9fa1a3]/20  h-[60px] px-6  rounded-[30px] text-[15px]"
-                    placeholder='To (address)'
-                    value={sendTokenData.sendTo}
-                    onChangeText={(text) => setSendTokenData({ ...sendTokenData, sendTo: text })}
+                    placeholder='delegetee (address)'
+                    value={creditData.delegeteeAddress}
+                    onChangeText={(text) => setCreditData({ ...creditData, delegeteeAddress: text })}
                     // onChange={(e) => setSendTokenData({ ...sendTokenData, address: e.nativeEvent.text })}                    
                     placeholderTextColor={'#9fa1a3'}
                     keyboardType='default'
                   />
                 </View>
-                {isLoading?(
-                  <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
-                  <Text className="text-xl text-center font-semibold  text-[#10131a]">Sending..</Text>
+                <TouchableOpacity  className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={()=>creditDelegate()}>
+                  <Text className="text-xl text-center font-semibold  text-[#10131a]">Delegate</Text>
                 </TouchableOpacity>
-                ):(
-                  <TouchableOpacity onPress={() => handleSendTokenBtn()} className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
-                  <Text className="text-xl text-center font-semibold  text-[#10131a]">Send</Text>
-                </TouchableOpacity>
-                )}
               </View>
             </View>
           </View>
-          <SheetModal />
+          {/* <SheetModal /> */}
         </Modal>
       </View>
 
@@ -163,4 +123,4 @@ const PayModal = () => {
   );
 };
 
-export default PayModal;
+export default CreditDelegation;

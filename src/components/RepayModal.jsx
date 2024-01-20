@@ -7,14 +7,27 @@ import SheetModal from './SheetModal';
 import { Entypo } from '@expo/vector-icons';
 import QrScannerModal from './QrScannerModal';
 import { ContextApi } from '../providers/store';
+import { repayTx } from '../utils/repay_token';
 
 
 
 const RepayModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const {panelRef,ethPrice,ghoPrice, selectedRepayToken,setSelectedRepayToken,repayData,setRepayData} = useContext(ContextApi)
+  const {panelRef,ethPrice,ghoPrice, selectedRepayToken,setSelectedRepayToken,repayData,setRepayData,userWalletData,signer} = useContext(ContextApi)
   const [repayType, setRepayType] = useState("full")
   console.log(repayData)
+
+  const repay=async()=>{
+    try {
+      const txnRes=await repayTx(userWalletData.publicAddress,repayData.amount,signer)
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+
+  const handleRepayBtn=()=>{
+    repay()
+  }
 
   return (
     <View>
@@ -54,7 +67,10 @@ const RepayModal = () => {
               <View className="flex flex-col space-y-6  relative rounded-lg">
 
               <View className="flex flex-row mt-6 justify-around">
-              <TouchableOpacity className="bg-[#7264FF]/70 px-6 py-1 rounded-3xl" onPress={() => setRepayType("full")}>
+              <TouchableOpacity className="bg-[#7264FF]/70 px-6 py-1 rounded-3xl" onPress={() => {
+                setRepayType("full")
+                setRepayData({...repayData,amount:-1})
+                }}>
                 <Text className="text-white text-lg font-semibold">Full</Text>
               </TouchableOpacity>
               <TouchableOpacity className="bg-[#7264FF]/70 px-6 py-1 rounded-3xl" onPress={() => setRepayType("partial")}>
@@ -110,7 +126,7 @@ const RepayModal = () => {
                   />
                 </View> */}
 
-                <TouchableOpacity onPress={() => showToast()} className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
+                <TouchableOpacity onPress={()=>handleRepayBtn()} className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
                   <Text className="text-xl text-center font-semibold  text-[#10131a]">Repay</Text>
                 </TouchableOpacity>
               </View>

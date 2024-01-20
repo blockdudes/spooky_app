@@ -11,6 +11,8 @@ import StableModal from '../components/StableModal'
 import BarCode from '../components/BarCode'
 import { ContextApi } from '../providers/store'
 import * as Clipboard from 'expo-clipboard';
+import CreditDelegation from '../components/CreditDelegation'
+
 
 
 const UserWalletScreen = () => {
@@ -32,7 +34,7 @@ const UserWalletScreen = () => {
             <SafeAreaView className="flex  bg-[#171A25] h-[100vh]  flex-col space-y-3 ">
                 
 
-                <View style={Dimensions.get('screen').height<668?{height:"65%"}:{height:"55%"}} className="pl-4 space-y-6 pt-4  rounded-b-[60px] shadow-xl bg-[#10131A]">
+                <View style={Dimensions.get('screen').height<668?{height:"75%"}:{height:"60%"}} className="pl-4 space-y-6 pt-4  rounded-b-[60px] shadow-xl bg-[#10131A]">
 
                     {/* //wallet address */}
                     <View className="items-center">
@@ -71,6 +73,9 @@ const UserWalletScreen = () => {
                                 <SwapModal/>
                                 <StableModal/>
                                 <RepayModal/>
+                            </View>
+                            <View className="flex flex-row justify-around">
+                                <CreditDelegation/>
                             </View>
                             
                         

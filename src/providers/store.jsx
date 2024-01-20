@@ -3,7 +3,11 @@ import "react-native-get-random-values"
 import "@ethersproject/shims"
 import { ethers } from "ethers";
 import axios from "axios"
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { provider } from "../utils/contracts";
+import { ghoToken, routerAddress } from "../utils/contracts";
+import { GHO_ABI } from "../Abis/gho_token_abi";
+import { UNISWAP_ROUTER_ABI } from "../Abis/uniswap_v2_router";
 export const ContextApi = createContext();
 
 
@@ -31,12 +35,17 @@ const AppProvider = ({ children }) => {
   const [activeTask,setActiveTask]=useState('')
   const [createWalletLoading,setCreateWalletLoading] = useState(false)
   const [ethPrice,setEthPrice] = useState(0)
+  const [signer, setSigner] = useState(null)
   const[ghoPrice,setGhoPrice] = useState(0)
+  const [ghoPriceEth,setGhoPriceEth] = useState(0)
+  const ghoContract = new ethers.Contract(ghoToken, GHO_ABI, signer);
+  const routerContract = new ethers.Contract(routerAddress, UNISWAP_ROUTER_ABI, signer);
   const [sendTokenData,setSendTokenData] = useState({
     amount:"0",
     tokenName:selectedSendToken.symbol,
     sendTo:""
   })
+
   const [swapData,setSwapData] = useState({
     amountToPay:"0",
     amountToReceive:"0",
@@ -59,8 +68,25 @@ const AppProvider = ({ children }) => {
     amount:"0",
     tokenName:selectedRepayToken.symbol
   })
+  const [creditData,setCreditData] = useState({
+    amount:"0",
+    delegeteeAddress:""
+  })
 
   const panelRef = useRef(null);
+
+  const getSigner = async() => {
+    const wallet_data = JSON.parse(await AsyncStorage.getItem('walletData'));
+    const signer = new ethers.Wallet(wallet_data.privateKey, provider);
+    setSigner(signer)
+    setUserWalletData(wallet_data)
+  }
+  console.log("pub key",userWalletData.publicAddress)
+
+useEffect(() => {
+  getSigner()
+},[])
+
 
   useEffect(()=>{
     const getGhoPrice = async () => {
@@ -70,7 +96,6 @@ const AppProvider = ({ children }) => {
             "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
           }
         })
-        console.log(data)
         setGhoPrice(data.gho.usd)
     }
     getGhoPrice()
@@ -80,6 +105,7 @@ const AppProvider = ({ children }) => {
     
   },[])
 
+ 
   useEffect(()=>{
     const getEthPrice = async () => {
       const {data}=await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",{
@@ -88,10 +114,24 @@ const AppProvider = ({ children }) => {
             "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
           }
         })
-        console.log(data)
         setEthPrice(data.ethereum.usd)
     }
     getEthPrice()
+    
+  },[])
+
+  useEffect(()=>{
+    const getGhoPriceEth = async () => {
+      const {data}=await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=gho&vs_currencies=eth",{
+          headers:{
+            "Content-Type":"application/json",
+            "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
+          }
+        })
+        console.log("newPrice--->",data)
+        setGhoPriceEth(data.gho.eth)
+    }
+    getGhoPriceEth()
     
   },[])
 
@@ -128,7 +168,14 @@ const AppProvider = ({ children }) => {
       repayData,
       setRepayData,
       ethPrice,
-      ghoPrice
+      ghoPrice,
+      signer,
+      setSigner,
+      ghoContract,
+      routerContract,
+      creditData,
+      setCreditData,
+      ghoPriceEth
       
       }}>
       {children}

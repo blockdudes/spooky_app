@@ -6,14 +6,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { ContextApi } from '../providers/store';
+import { borrow } from '../utils/borrow_token';
 
 
 
 const BorrowModal = () => {
   const [payAmount, setPayAmount] = useState("0")
   const [sendAddress, setSendAddress] = useState("")
-  const {borrowModalVisible,setBorrowModalVisible}=useContext(ContextApi)
+  const {borrowModalVisible,setBorrowModalVisible,userWalletData,signer}=useContext(ContextApi)
   console.log(payAmount)
+
+
+  const borrowToken=async()=>{
+    try {
+    txnRes=await borrow(userWalletData.publicAddress,payAmount,signer,sendAddress)
+  
+      
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
 
   return (
     <SafeAreaView>
@@ -53,6 +66,8 @@ const BorrowModal = () => {
                     onChangeText={setPayAmount}
                     value={payAmount}
                     keyboardType="numeric"
+                    placeholder='0.0'
+                    placeholderTextColor={'#9fa1a3'}
                   />
                   <Text className="text-[#9fa1a3]">$150.42</Text>
                 </View>
@@ -87,7 +102,7 @@ const BorrowModal = () => {
 
               
 
-                <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
+                <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={borrowToken}>
                   <Text className="text-xl text-center font-semibold  text-[#10131a]">Borrow</Text>
                 </TouchableOpacity>
 

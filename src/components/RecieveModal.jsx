@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, StyleSheet } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
@@ -9,6 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import BarCode from './BarCode';
 import QRCode from "react-native-qrcode-svg"
 import * as Clipboard from 'expo-clipboard';
+import { ContextApi } from '../providers/store';
 
 
 const RecieveModal = () => {
@@ -22,8 +23,9 @@ const RecieveModal = () => {
   const ref = useRef();
   const [isCopied, setIsCopied] = useState(false);
 
+  const {userWalletData}=useContext(ContextApi)
   const copyToClipBoard=async()=>{
-    const status=await Clipboard.setStringAsync('0xabch....xvshb')
+    const status=await Clipboard.setStringAsync(userWalletData.publicAddress)
     setIsCopied(status)
     setTimeout(() => {
       setIsCopied(false)
@@ -80,7 +82,7 @@ const RecieveModal = () => {
 
                       <QRCode
                         size={200}
-                        value={QRvalue ? QRvalue : 'NA'}
+                        value={userWalletData.publicAddress ? userWalletData.publicAddress : 'NA'}
 
                         logoSize={60}
                         getRef={ref}
@@ -103,7 +105,7 @@ const RecieveModal = () => {
                 {/* select token div */}
                 <View className="mx-auto">
                   <View className="bg-[#10131A] flex flex-row items-center  px-4 space-x-4 rounded-[30px]  h-[55px] ">
-                    <Text className="text-white tracking-wider text-lg">0xabch....xvshb</Text>
+                    <Text className="text-white tracking-wider text-lg">{`${userWalletData?.publicAddress.slice(0,5)}...${userWalletData.publicAddress.slice(-5)}`}</Text>
                     <TouchableOpacity onPress={() => copyToClipBoard()}>
                       {isCopied ?(
                         <Feather name="check" size={20} color="green" />
