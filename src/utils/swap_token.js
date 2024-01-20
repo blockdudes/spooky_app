@@ -69,13 +69,12 @@ export async function swapETHForExactTokens(
 export async function getOut(
   routerContract,
   amountIn,
-  tokenIn,
-  tokenOut
+  path
 ) {
 
   const tx = await routerContract.getAmountsOut(
     amountIn,
-    [tokenIn, tokenOut]
+    path
   )
   return tx;
 

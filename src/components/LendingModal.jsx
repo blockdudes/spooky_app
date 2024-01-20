@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,11 +30,16 @@ const LendingModal = () => {
     setIsLoading(true)
     try {
       const txnRes = await supply(userWalletData.publicAddress, lendData.amount, signer, lendData.optionalAddress)
+      const reciept =await txnRes.wait(1)
       setIsLoading(false)
-      successToast("Token lend successfully")
+      if(reciept){
+
+        successToast("Token lend successfully")
+      }
     } catch (error) {
       setIsLoading(false)
       errorToast(error.message)
+      console.log("helo--->",error)
 
     }
   }
@@ -52,8 +57,8 @@ const LendingModal = () => {
 
       <View>
         <View className="flex items-center space-y-2 mr-4">
-          <TouchableOpacity className=" bg-[#7264FF]  rounded-2xl w-[75px] flex items-center py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="bank" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF]  rounded-2xl w-[70px] flex items-center py-4 px-5" onPress={() => setModalVisible(true)}>
+            <FontAwesome name="bank" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Lend</Text>
         </View>
@@ -132,7 +137,8 @@ const LendingModal = () => {
                 {
                   isLoading ? (
 
-                    <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
+                    <TouchableOpacity className=" rounded-[30px] flex flex-row items-center justify-center space-x-4 bg-[#9fa1a3]/70 py-4">
+                      <ActivityIndicator size="small" color="#10131a" />
                       <Text className="text-xl text-center font-semibold  text-[#10131a]">Lending...</Text>
                     </TouchableOpacity>
                   ) : (

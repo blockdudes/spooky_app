@@ -37,8 +37,8 @@ const RecieveModal = () => {
 
       <View>
         <View className="flex items-center space-y-2 mr-4">
-          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex  items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="arrow-down" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex  items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+            <FontAwesome name="arrow-down" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Recieve</Text>
         </View>

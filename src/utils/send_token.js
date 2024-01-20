@@ -1,9 +1,11 @@
 const { ethers } = require('ethers');
 const {sponser, provider} = require('./contracts')
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 async function sendEth(signer, to, amount) {
-    try {
+    
         const nonce = await provider.getTransactionCount(signer.getAddress())
         const gasPrice = await signer.getGasPrice()
         const gasLimit = await signer.estimateGas({
@@ -22,10 +24,9 @@ async function sendEth(signer, to, amount) {
         const tx = await signer.sendTransaction(transaction);
         const receipt = await tx.wait();
         console.log(`Transaction hash: ${receipt.transactionHash}`);
+        
         return receipt
-    } catch (error) {
-        console.error("Error sending ETH:", error);
-    }
+    
 }
 
 async function sendGho(signer, ghoContract, to, amount) {
@@ -125,6 +126,38 @@ async function sendGho(signer, ghoContract, to, amount) {
         const tx = await sponser.sendTransaction(transaction);
         const receipt = await tx.wait();
         console.log(`Transaction executed with hash: ${receipt.transactionHash}`);
+        //set this txn to localStorage
+        const data= await JSON.parse(await AsyncStorage.getItem(signer.address))
+        if(data){
+            await AsyncStorage.setItem(signer.address,JSON.stringify(
+                [
+                    ...data,
+                    {
+                        type:"GhoSend",
+                        from:signer.address,
+                        to:to,
+                        amount:amount
+    
+    
+                    }
+                ]
+            ))
+        }else{
+            await AsyncStorage.setItem(signer.address,JSON.stringify(
+                [
+                    
+                    {
+                        type:"GhoSend",
+                        from:signer.address,
+                        to:to,
+                        amount:amount
+    
+    
+                    }
+                ]
+            ))
+        }
+        
         return receipt;
     } catch (error) {
         console.error("Error sending GHO:", error);

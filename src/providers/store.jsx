@@ -46,6 +46,7 @@ const AppProvider = ({ children }) => {
     sendTo:""
   })
 
+
   const [swapData,setSwapData] = useState({
     amountToPay:"0",
     amountToReceive:"0",
@@ -77,6 +78,7 @@ const AppProvider = ({ children }) => {
 
   const getSigner = async() => {
     const wallet_data = JSON.parse(await AsyncStorage.getItem('walletData'));
+    console.log("walletData--->",wallet_data)
     const signer = new ethers.Wallet(wallet_data.privateKey, provider);
     setSigner(signer)
     setUserWalletData(wallet_data)
@@ -90,14 +92,19 @@ useEffect(() => {
 
   useEffect(()=>{
     const getGhoPrice = async () => {
+
+
       const {data}=await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=gho&vs_currencies=usd",{
           headers:{
             "Content-Type":"application/json",
             "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
           }
         })
+
         setGhoPrice(data.gho.usd)
+        
     }
+    
     getGhoPrice()
     
 

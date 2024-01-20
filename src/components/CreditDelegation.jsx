@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,23 +10,37 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from '../config/toastConfig';
 import SheetModal from './SheetModal';
 import { ContextApi, supportedTokens } from '../providers/store';
-import { successToast } from '../config/CallToast';
+import { errorToast, successToast } from '../config/CallToast';
 import { sendEth, sendGho } from '../utils/send_token';
 import { provider } from '../utils/contracts';
 import { approveCreditDelegation } from '../utils/lend_tokens';
+import { ethers } from 'ethers';
 
 
 
 const CreditDelegation = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { signer,ethPrice,ghoPrice,panelRef, selectedSendToken, setSendTokenData, sendTokenData, ghoContract,setCreditData,creditData } = useContext(ContextApi)
+  const { signer,ethPrice,ghoPrice,panelRef, selectedSendToken, setSendTokenData, sendTokenData, ghoContract,setCreditData,creditData,ghoDebtContract } = useContext(ContextApi)
+  const [isLoading,setIsLoading]=useState(false)
   
   const creditDelegate=async()=>{
+    setIsLoading(true)
+
     try {
-      const txn =await approveCreditDelegation(creditData.delegeteeAddress,creditData.amount)
-      
+
+      const amountInWei = ethers.utils.parseEther(creditData.amount);
+      const txn = await approveCreditDelegation(ghoDebtContract, signer, creditData.delegeteeAddress, amountInWei)
+      const receipt=await txn.wait()
+      setIsLoading(false)
+      if(receipt){
+
+        successToast("Token sent successfully")
+      }
+
     } catch (error) {
-      
+      console.log(error)
+      setIsLoading(false)
+      errorToast(error.message)
     }
   }
 
@@ -35,8 +49,8 @@ const CreditDelegation = () => {
 
       <View>
         <View className="flex items-center space-y-2 mr-4">
-          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="send" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+            <FontAwesome name="send" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Delegate</Text>
         </View>
@@ -59,7 +73,7 @@ const CreditDelegation = () => {
               </TouchableOpacity>
               <Text className="text-white text-center text-lg semibold">Credit Delegation</Text>
               <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
-                <QrScannerModal />
+                {/* <QrScannerModal /> */}
               </View>
             </View>
 
@@ -78,7 +92,7 @@ const CreditDelegation = () => {
                     placeholder='0.0'
                     placeholderTextColor={'#9fa1a3'}
                   />
-                  <Text className="text-[#9fa1a3]">${selectedSendToken.symbol==="ETH" ? Number(sendTokenData.amount || 0)*ethPrice : Number(sendTokenData.amount || 0)*ghoPrice}</Text>
+                  <Text className="text-[#9fa1a3]">${creditData.amount * ghoPrice || 0}</Text>
                 </View>
 
                 {/* select token div */}
@@ -108,9 +122,18 @@ const CreditDelegation = () => {
                     keyboardType='default'
                   />
                 </View>
-                <TouchableOpacity  className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={()=>creditDelegate()}>
-                  <Text className="text-xl text-center font-semibold  text-[#10131a]">Delegate</Text>
+                {
+                  isLoading ? (
+                    <TouchableOpacity  className=" rounded-[30px] flex flex-row justify-center items-center space-x-4 bg-[#9fa1a3]/70 py-4">
+                      <ActivityIndicator size="small" color="#10131a" />
+                  <Text className="text-lg text-center font-semibold  text-[#10131a]">Delegating</Text>
                 </TouchableOpacity>
+                  ):(
+                    <TouchableOpacity  className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={()=>creditDelegate()}>
+                  <Text className="text-lg text-center font-semibold  text-[#10131a]">Delegate</Text>
+                </TouchableOpacity>
+                  )
+                }
               </View>
             </View>
           </View>

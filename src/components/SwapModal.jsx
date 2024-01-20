@@ -16,45 +16,45 @@ import { swapETHForExactTokens, swapTokensForEth } from '../utils/swap_token';
 const SwapModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [getOutPrice, setGetOutPrice] = useState(0);
+  const [isLoading,setIsLoading]=useState(false)
   const { selectedPayToken, ethPrice, ghoPrice, setSelectedPayToken, selectedRecieveToken, setSelectedRecieveToken, setActiveTask, panelRef, swapData, setSwapData, routerContract, signer } = useContext(ContextApi)
 
 
-  // useEffect(() => {
-  // const getOutPrice = async() => {
-  //   try {
-  //     const payAmount = ethers.utils.parseUnits(swapData.amountToPay, 'ether');
-  //     const data = await getOut(
-  //       routerContract,
-  //       payAmount,
-  //       selectedPayToken.symbol== "ETH" ? wethAddress : ghoToken,
-  //       selectedRecieveToken.symbol== "GHO" ? ghoToken : wethAddress
-  //     )
-  //     const amountToReceive = ethers.utils.formatUnits(data[1], 'ether');
-  //     // const amountToReceive = ethers.BigNumber.from(data[1]).toString();
-  //     setGetOutPrice(amountToReceive)
+  useEffect(() => {
+    const getOutPrice = async () => {
+      try {
+        const payAmount = ethers.utils.parseUnits(swapData.amountToPay, 18);
+        if (payAmount == 0) {
+          setGetOutPrice(0)
+          return
+        }
+        const data = await getOut(
+          routerContract,
+          payAmount,
+          selectedPayToken.symbol == "ETH" ? [wethAddress, ghoToken] : [ghoToken, wethAddress]
+        )
+        console.log("data entered", data)
+        const amountOut = data[data.length - 1];
+        const amountToReceive = ethers.utils.formatUnits(amountOut, 18);
 
-  //   } catch (error) {
-  //     console.log(error)
-  //   } 
+        console.log("amtToScreen", amountToReceive)
+        setGetOutPrice(amountToReceive)
 
-  // }
-  //   getOutPrice()
-  // },[swapData])
+      } catch (error) {
+        console.log("err", error)
+      }
+
+    }
+    getOutPrice()
+  }, [swapData])
 
   const swapEthToGho = async () => {
     try {
-      // swapETHForExactTokens(
-      // routerContract,
-      //   swapData.amountToPay,
-      // swapData.amountToReceive,
-      //   getOutPrice,
-      //   signer.address
-      // )
-      swapETHForExactTokens(
+     await swapETHForExactTokens(
         routerContract,
-        "0.000000004",
-        "0.00001",
-        signer.address,
+        swapData.amountToPay,
+        getOutPrice,
+        signer.address
       )
     } catch (error) {
       console.log(error)
@@ -63,10 +63,11 @@ const SwapModal = () => {
 
 
   const swapGhoToEth = async () => {
-    swapTokensForEth(
-      signer,
+    await swapTokensForEth(
+      routerContract,
       swapData.amountToPay,
-      getOutPrice
+      getOutPrice,
+      signer.address
     )
   }
 
@@ -84,8 +85,8 @@ const SwapModal = () => {
       <View>
         <View className="flex items-center space-y-2 mr-4">
 
-          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <Entypo name="wallet" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+            <Entypo name="wallet" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white ">Swap</Text>
         </View>

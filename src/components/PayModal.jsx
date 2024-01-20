@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,11 +29,15 @@ const PayModal = () => {
     try {
       const txnRes = await sendEth(signer, sendTokenData.sendTo, sendTokenData.amount.toString())
       setIsLoading(false)
-      successToast("Token sent successfully")
+      if(txnRes){
+        
+        successToast("Token sent successfully")
+        
+      }
     } catch (error) {
+      errorToast(error.message)
       setIsLoading(false)
       console.log(error)
-      errorToast(error.message)
       
     }
   }
@@ -65,8 +69,8 @@ const PayModal = () => {
 
       <View>
         <View className="flex items-center space-y-2 mr-4">
-          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="send" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+            <FontAwesome name="send" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Send</Text>
         </View>
@@ -143,7 +147,8 @@ const PayModal = () => {
                   />
                 </View>
                 {isLoading?(
-                  <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
+                  <TouchableOpacity className=" rounded-[30px] justify-center items-center flex flex-row space-x-4 bg-[#9fa1a3]/70 py-4">
+                    <ActivityIndicator size="small" color="#10131a" />
                   <Text className="text-xl text-center font-semibold  text-[#10131a]">Sending..</Text>
                 </TouchableOpacity>
                 ):(

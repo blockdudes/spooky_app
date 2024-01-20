@@ -23,7 +23,7 @@ export default function BarCode({setModalVisible}) {
     setHasScanned(true);
     console.log(data);
     setScannedText(data);
-    setSendTokenData({...sendTokenData,address:data})
+    setSendTokenData({...sendTokenData,sendTo:data})
     setModalVisible(false)
     successToast("Address successfully scanned")
   };

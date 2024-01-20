@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { toastConfig } from '../config/toastConfig';
 import Toast from "react-native-toast-message"
@@ -8,6 +8,7 @@ import { Entypo } from '@expo/vector-icons';
 import QrScannerModal from './QrScannerModal';
 import { ContextApi } from '../providers/store';
 import { repayTx } from '../utils/repay_token';
+import { errorToast, successToast } from '../config/CallToast';
 
 
 
@@ -15,13 +16,21 @@ const RepayModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const {panelRef,ethPrice,ghoPrice, selectedRepayToken,setSelectedRepayToken,repayData,setRepayData,userWalletData,signer} = useContext(ContextApi)
   const [repayType, setRepayType] = useState("full")
+  const [isLoading,setIsLoading]=useState(false)
   console.log(repayData)
 
   const repay=async()=>{
+    setIsLoading(true)
     try {
+
       const txnRes=await repayTx(userWalletData.publicAddress,repayData.amount,signer)
+      const reciept=await txnRes.wait()
+      setIsLoading(false)
+      successToast("Token repay successfully")
     } catch (error) {
+      setIsLoading(false)
       console.log(error) 
+      errorToast(error.message)
     }
   }
 
@@ -33,8 +42,8 @@ const RepayModal = () => {
     <View>
       <View className="flex items-center space-y-2 mr-4">
 
-        <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-          <FontAwesome name="money" size={25} color="white" />
+        <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+          <FontAwesome name="money" size={20} color="white" />
         </TouchableOpacity>
         <Text className="text-white  ">Repay</Text>
       </View>
@@ -90,8 +99,10 @@ const RepayModal = () => {
                     onChangeText={(text)=>setRepayData({...repayData,amount:text})}
                     className="text-[#ffffff] text-4xl"
                     keyboardType="numeric"
+                    placeholder='0.0'
+                    placeholderTextColor={'#9fa1a3'}
                   />
-                  <Text className="text-[#9fa1a3]">${selectedRepayToken.symbol==="ETH" ? Number(repayData.amount || 0)*ethPrice : Number(repayData.amount || 0)*ghoPrice}</Text>
+                  <Text className="text-[#9fa1a3]">${selectedRepayToken.symbol === "ETH" ? Number(repayData.amount || 0) * ethPrice : Number(repayData.amount || 0) * ghoPrice}</Text>
                 </View>
                   )
                 }
@@ -126,9 +137,18 @@ const RepayModal = () => {
                   />
                 </View> */}
 
-                <TouchableOpacity onPress={()=>handleRepayBtn()} className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
-                  <Text className="text-xl text-center font-semibold  text-[#10131a]">Repay</Text>
+                {
+                  isLoading?(
+                    <TouchableOpacity  className=" rounded-[30px] flex flex-row justify-center items-center space-x-4 bg-[#9fa1a3]/70 py-4">
+                      <ActivityIndicator size="small" color="#10131a" />
+                  <Text className="text-lg text-center font-semibold  text-[#10131a]">Repaying..</Text>
                 </TouchableOpacity>
+                  ):(
+                    <TouchableOpacity onPress={()=>handleRepayBtn()} className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
+                  <Text className="text-lg text-center font-semibold  text-[#10131a]">Repay</Text>
+                </TouchableOpacity>
+                  )
+                }
               </View>
             </View>
           </View>

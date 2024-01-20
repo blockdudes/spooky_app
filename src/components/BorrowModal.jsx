@@ -1,29 +1,42 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { ContextApi } from '../providers/store';
+import { ContextApi, supportedTokens } from '../providers/store';
 import { borrow } from '../utils/borrow_token';
+import { errorToast, successToast } from '../config/CallToast';
+import { toastConfig } from '../config/toastConfig';
+import Toast from "react-native-toast-message"
 
 
 
 const BorrowModal = () => {
   const [payAmount, setPayAmount] = useState("0")
   const [sendAddress, setSendAddress] = useState("")
-  const {borrowModalVisible,setBorrowModalVisible,userWalletData,signer}=useContext(ContextApi)
+  const [isLoading,setIsLoading]=useState(false)
+  const {borrowModalVisible,setBorrowModalVisible,userWalletData,signer,ghoPrice}=useContext(ContextApi)
   console.log(payAmount)
 
 
   const borrowToken=async()=>{
+    setIsLoading(true)
     try {
-    txnRes=await borrow(userWalletData.publicAddress,payAmount,signer,sendAddress)
+    const txnRes=await borrow(userWalletData.publicAddress,payAmount,signer,sendAddress)
+    const reciept=await txnRes.wait()
+    setIsLoading(false)
+    if(reciept){
+
+      successToast("Token borrowed successfully")
+    }
   
       
     } catch (error) {
-      console.log(error)
+      setIsLoading(false)
+      
+      errorToast(error.message)
       
     }
   }
@@ -38,6 +51,8 @@ const BorrowModal = () => {
           visible={borrowModalVisible}
         >
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
+          <Toast position='bottom' bottomOffset={80} config={toastConfig} />
+            
 
             {/* top div */}
             <View className=" px-6 flex flex-row justify-between items-center">
@@ -69,7 +84,7 @@ const BorrowModal = () => {
                     placeholder='0.0'
                     placeholderTextColor={'#9fa1a3'}
                   />
-                  <Text className="text-[#9fa1a3]">$150.42</Text>
+                  <Text className="text-[#9fa1a3]">${payAmount*ghoPrice || 0}</Text>
                 </View>
 
                 {/* select token div */}
@@ -78,11 +93,11 @@ const BorrowModal = () => {
                     <Image
                       className="h-[35px] rounded-full  w-[35px] object-cover self-center"
                       source={{
-                        uri: 'https://logowik.com/content/uploads/images/ethereum3649.jpg',
+                        uri: supportedTokens[1].logo,
                       }}
                     />
-                    <Text className="text-white text-xl">Eth</Text>
-                    <Text className="text-[#9fa1a3]">Ethereum</Text>
+                    <Text className="text-white text-xl">{supportedTokens[1].symbol}</Text>
+                    <Text className="text-[#9fa1a3]">{supportedTokens[1].name}</Text>
                   </View>
                 </View>
 
@@ -99,14 +114,20 @@ const BorrowModal = () => {
                       te
                     />
                   </View>
+                  {
+                    isLoading ? (
+                      <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 flex flex-row justify-center items-center space-x-4 py-4">
+                        <ActivityIndicator size="small" color='#10131a'/>
+                  <Text className="text-lg text-center font-semibold  text-[#10131a]">Borrowing</Text>
+                </TouchableOpacity>
+                    ):(
 
-              
-
-                <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={borrowToken}>
+                      <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={borrowToken}>
                   <Text className="text-xl text-center font-semibold  text-[#10131a]">Borrow</Text>
                 </TouchableOpacity>
 
-
+                    )
+                  }
               </View>
             </View>
           </View>

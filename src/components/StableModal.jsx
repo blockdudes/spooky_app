@@ -1,29 +1,44 @@
 import React, { useCallback, useMemo, useRef, useState,useContext } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TextInput, Image, SafeAreaView, ActivityIndicator } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { ContextApi, supportedTokens } from '../providers/store';
 import { stablizeTokens } from '../utils/stablize_tokens';
+import { errorToast } from '../config/CallToast';
+import { toastConfig } from '../config/toastConfig';
+import Toast from "react-native-toast-message"
 
 
 
 const StableModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [payAmount, setPayAmount] = useState("0")
-  const {userWalletData,ghoPriceEth} = useContext(ContextApi)
+  const {userWalletData,ghoPriceEth,signer} = useContext(ContextApi)
+  const [isLoading,setIsLoading]=useState(false)
+
   console.log(payAmount)
 
 
   const stabilizeEthToken=async()=>{
+    setIsLoading(true)
     try {
+      
       console.log("stabilize--->")
-      const txnRes=await stablizeTokens(userWalletData.publicAddress,payAmount,payAmount/ghoEthPrice,signer)
-      
+      const txnRes=await stablizeTokens(userWalletData.publicAddress,payAmount,payAmount/ghoPriceEth,signer)
+      const reciept=await txnRes.wait()
+
+      setIsLoading(false)
+      if(reciept){
+        successToast("Eth stabilized successfully")
+      }      
     } catch (error) {
-      
+      setIsLoading(false)
+      console.log(error)
+      errorToast(error.message)
     }
   }
 
@@ -35,8 +50,8 @@ const StableModal = () => {
       <View>
         <View className="flex items-center space-y-2 mr-4">
 
-          <TouchableOpacity className=" bg-[#7264FF] w-[75px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="money" size={25} color="white" />
+          <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
+            <FontAwesome name="money" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Stablize</Text>
         </View>
@@ -48,6 +63,8 @@ const StableModal = () => {
         >
 
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
+          <Toast position='bottom' bottomOffset={80} config={toastConfig} />
+
 
 
             {/* top div */}
@@ -138,9 +155,21 @@ const StableModal = () => {
                   </View>
                 </View>
               </View>
-              <TouchableOpacity className=" rounded-[30px] mt-8  bg-[#9fa1a3] py-4" onPress={()=>stabilizeEthToken()}>
-                <Text className="text-xl text-center font-semibold   text-[#10131a]">Stabilize</Text>
+              {
+                isLoading ? (
+                  <TouchableOpacity className=" rounded-[30px] flex flex-row justify-center space-x-4 mt-8  bg-[#9fa1a3] py-4" >
+                    <ActivityIndicator  size="small" color="#10131a" />
+                <Text className="text-lg text-center font-semibold   text-[#10131a]">Stabilize</Text>
               </TouchableOpacity>
+
+                ):(
+
+                  <TouchableOpacity className=" rounded-[30px] mt-8  bg-[#9fa1a3] py-4" onPress={()=>stabilizeEthToken()}>
+                <Text className="text-lg text-center font-semibold   text-[#10131a]">Stabilize</Text>
+              </TouchableOpacity>
+
+                )
+              }
 
             </View>
           </View>
