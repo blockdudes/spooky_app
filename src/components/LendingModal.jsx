@@ -30,9 +30,8 @@ const LendingModal = () => {
     setIsLoading(true)
     try {
       const txnRes = await supply(userWalletData.publicAddress, lendData.amount, signer, lendData.optionalAddress)
-      const reciept =await txnRes.wait(1)
       setIsLoading(false)
-      if(reciept){
+      if(txnRes){
 
         successToast("Token lend successfully")
       }

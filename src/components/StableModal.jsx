@@ -29,10 +29,10 @@ const StableModal = () => {
       
       console.log("stabilize--->")
       const txnRes=await stablizeTokens(userWalletData.publicAddress,payAmount,payAmount/ghoPriceEth,signer)
-      const reciept=await txnRes.wait()
+      
 
       setIsLoading(false)
-      if(reciept){
+      if(txnRes){
         successToast("Eth stabilized successfully")
       }      
     } catch (error) {
