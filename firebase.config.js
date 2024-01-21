@@ -25,7 +25,7 @@
 // }
 
 
-import { initializeApp } from 'firebase/app';
+import { getApps, initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
 
 
@@ -38,18 +38,16 @@ import { getFirestore } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
-    apiKey: 'api-key',
-    authDomain: 'project-id.firebaseapp.com',
-    databaseURL: 'https://project-id.firebaseio.com',
-    projectId: 'project-id',
-    storageBucket: 'project-id.appspot.com',
-    messagingSenderId: 'sender-id',
-    appId: 'app-id',
-    measurementId: 'G-measurement-id',
-};
+    apiKey: "AIzaSyB4uhFM9BzP1ww-I36w1CVKDW-2P5KUa60",
+    authDomain: "goaave-755a2.firebaseapp.com",
+    projectId: "goaave-755a2",
+    storageBucket: "goaave-755a2.appspot.com",
+    messagingSenderId: "15933041933",
+    appId: "1:15933041933:web:3eff9d3fdc23b2dfe5d444"
+  };
 
-// const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-// // For more information on how to access Firebase in your project,
-// // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
-// export const db = getFirestore(app);
-// export default app;
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
+
+export const db = getFirestore(app);
+export default app;

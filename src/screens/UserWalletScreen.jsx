@@ -25,6 +25,7 @@ import CreditDelegation from "../components/CreditDelegation";
 import { ethers } from "ethers";
 import { LinearGradient } from "expo-linear-gradient";
 import { Gradient } from "../components/Gradient";
+import { db } from "../../firebase.config";
 
 const UserWalletScreen = () => {
   const [activeTab, setActiveTab] = useState("Activity");
@@ -54,6 +55,20 @@ const UserWalletScreen = () => {
       setIsCopied(false);
     }, 4000);
   };
+
+//   const firebaseTest = () => {
+//     db.collection("testCollection").doc("testDoc").set({
+//         name: "Test Name",
+//         email: "test@email.com",
+//         profile_picture : "testProfilePictureUrl"
+//     })
+//     .then(() => {
+//         console.log("Document successfully written!");
+//     })
+//     .catch((error) => {
+//         console.error("Error writing document: ", error);
+//     });
+//   }
 
   return (
     <View className="bg-[#10131A]">

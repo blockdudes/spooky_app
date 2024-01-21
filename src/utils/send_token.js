@@ -95,6 +95,7 @@ async function sendGho(signer, ghoContract, to, amount) {
         //     const checkk = ethers.utils.verifyTypedData(domain, types, value, signature);
         //     console.log(`Recovered signer: ${checkk}`);
 
+
         // Permit the sponser to spend tokens on behalf of the signer
         const permit = await ghoContract.connect(sponser).permit(
             signer.address,
@@ -108,6 +109,7 @@ async function sendGho(signer, ghoContract, to, amount) {
             gasLimit: 80000 //hardcoded gas limit; change if needed
         }
         );
+        console.log(permit)
         await permit.wait(2) //wait 2 blocks after tx is confirmed
 
         // Now the provider can send the transaction
@@ -122,41 +124,11 @@ async function sendGho(signer, ghoContract, to, amount) {
             gasLimit: 80000,
             gasPrice
         };
+        console.log("enter")
 
         const tx = await sponser.sendTransaction(transaction);
         const receipt = await tx.wait();
         console.log(`Transaction executed with hash: ${receipt.transactionHash}`);
-        //set this txn to localStorage
-        const data= await JSON.parse(await AsyncStorage.getItem(signer.address))
-        if(data){
-            await AsyncStorage.setItem(signer.address,JSON.stringify(
-                [
-                    ...data,
-                    {
-                        type:"GhoSend",
-                        from:signer.address,
-                        to:to,
-                        amount:amount
-    
-    
-                    }
-                ]
-            ))
-        }else{
-            await AsyncStorage.setItem(signer.address,JSON.stringify(
-                [
-                    
-                    {
-                        type:"GhoSend",
-                        from:signer.address,
-                        to:to,
-                        amount:amount
-    
-    
-                    }
-                ]
-            ))
-        }
         
         return receipt;
     } catch (error) {
