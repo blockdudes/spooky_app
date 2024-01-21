@@ -36,6 +36,13 @@ export async function swapTokensForEth(
 
   console.log(tx)
   const receipt = await tx.wait();
+  await setTX(
+    to,
+    "swapGhoforETH",
+    routerContract,
+    "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008",
+    amountIn
+  )
   return receipt;
 }
 
@@ -63,6 +70,14 @@ export async function swapETHForExactTokens(
 
   console.log(tx)
   const receipt = await tx.wait();
+  await setTX(
+    to,
+    "swapETHForGho",
+    to,
+    "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008",
+    amountIn
+  )
+
   return receipt;
 }
 

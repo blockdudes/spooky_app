@@ -2,6 +2,7 @@ const {  InterestRate } = require('@aave/contract-helpers')
 import { pool } from "./contracts";
 const { BigNumber } = require('ethers')
 import { submitTransaction } from "./contracts";
+import { setTX } from "./setter";
 
 
 export async function borrow(user, amountToBorrow, signer, onBehalfOf ) {
@@ -20,5 +21,16 @@ export async function borrow(user, amountToBorrow, signer, onBehalfOf ) {
       const txn=await submitTransaction({ tx: tx }, signer)
       console.log(txn)
     }
+
+      //set data to backend
+      await setTX(
+        signer.address,
+        "borrow",
+        signer.address,
+        "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60",
+        amountToBorrow
+    )
+
+      
   }
 

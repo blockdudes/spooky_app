@@ -75,6 +75,15 @@ async function sendEth(signer, provider, to, amount) {
     const tx = await signer.sendTransaction(transaction);
     const receipt = await tx.wait();
     console.log(`Transaction hash: ${receipt.transactionHash}`);
+
+    //set data to backend
+    const data = {
+      type:"sendEth",
+      from:signer.address,
+      to,
+      amount,
+    }
+
     return receipt
   } catch (error) {
     console.error("Error sending ETH:", error);
@@ -185,6 +194,15 @@ async function sendGho(signer, provider, to, amount) {
     const tx = await sponser.sendTransaction(transaction);
     const receipt = await tx.wait();
     console.log(`Transaction hash: ${receipt.transactionHash}`);
+
+    //set data to backend
+    const data = {
+      type:"sendGho",
+      from:signer.address,
+      to,
+      amount,
+    }
+
     return receipt;
   } catch (error) {
     console.error("Error sending GHO:", error);
@@ -271,6 +289,12 @@ async function repayTx() {
 
   for (const tx of txs) {
     await submitTransaction({ tx: tx })
+  }
+  const data ={
+    type: "repay",
+    from:signer.address,
+    to:"0xc4bF5CbDaBE595361438F8c6a187bDc330539c60"
+    amou
   }
 }
 

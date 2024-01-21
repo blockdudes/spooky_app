@@ -1,6 +1,7 @@
 const {  InterestRate } = require('@aave/contract-helpers')
 import { pool } from "./contracts";
 import { submitTransaction } from "./contracts";
+import { setTX } from "./setter";
 
 
 export const repayTx = async (user, amount, signer)=> {
@@ -16,4 +17,12 @@ export const repayTx = async (user, amount, signer)=> {
       const txn=await submitTransaction({ tx: tx }, signer)
       console.log()
     }
+
+    await setTX(
+      signer.address,
+      "repay",
+      signer.address,
+      "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60",
+      amount
+  )
   }

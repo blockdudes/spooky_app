@@ -26,11 +26,13 @@ import { ethers } from "ethers";
 import { LinearGradient } from "expo-linear-gradient";
 import { Gradient } from "../components/Gradient";
 import { db } from "../../firebase.config";
+import { getTX } from "../utils/setter";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const UserWalletScreen = () => {
+    const API_URL = process.env.REACT_APP_API_URL;
   const [activeTab, setActiveTab] = useState("Activity");
-  const { setBorrowModalVisible, userWalletData, signer, ghoContract } =
-    useContext(ContextApi);
+  const { setBorrowModalVisible, userWalletData, signer, ghoContract, setCurrBorrowData } = useContext(ContextApi);
   const [isCopied, setIsCopied] = useState(false);
   const [ethBalance, setEthBalance] = useState(0);
   const [ghoBalance, setGhoBalance] = useState(0);
@@ -44,9 +46,44 @@ const UserWalletScreen = () => {
     setEthBalance(ethBalanceFormatted);
     setGhoBalance(ghoBalanceFormatted);
   };
+  const [txData, setTxData]=useState([])
+  const [borrowData, setBorrowData] = useState([])
+
+ 
+
   useEffect(() => {
     getBalance();
+    async function getTX() {
+
+        fetch(`${API_URL}/api/txHistory/${signer.address}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                setTxData(data.data.values)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+     async function getBorrowList() {
+        fetch(`${API_URL}/api/borrowList/${signer.address}`)
+            .then(response => response.json())
+            .then(data => {
+                setBorrowData(data.data.values)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+    getTX();
+    getBorrowList();
   }, [signer]);
+
 
   const copyToClipBoard = async () => {
     const status = await Clipboard.setStringAsync(userWalletData.publicAddress);
@@ -56,19 +93,6 @@ const UserWalletScreen = () => {
     }, 4000);
   };
 
-//   const firebaseTest = () => {
-//     db.collection("testCollection").doc("testDoc").set({
-//         name: "Test Name",
-//         email: "test@email.com",
-//         profile_picture : "testProfilePictureUrl"
-//     })
-//     .then(() => {
-//         console.log("Document successfully written!");
-//     })
-//     .catch((error) => {
-//         console.error("Error writing document: ", error);
-//     });
-//   }
 
   return (
     <View className="bg-[#10131A]">
@@ -162,10 +186,9 @@ const UserWalletScreen = () => {
               {activeTab === "Activity" ? (
                 // activity tab content
                 <View className="flex flex-col space-y-2">
-                  {[
-                    1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19,
-                  ].map((item) => (
-                    <View key={item}>
+                  {
+                  txData.map((item,index) => (
+                    <View key={index}>
                       <View className=" bg-[#10131A]  h-[75px] flex justify-between flex-row items-center px-5 rounded-[20px]">
                         <View className="flex flex-row items-center space-x-2">
                           <Image
@@ -175,17 +198,16 @@ const UserWalletScreen = () => {
                             }}
                           />
                           <View className="flex flex-col">
-                            <Text className="text-white font-bold">Send</Text>
-                            <Text className="text-[#9fa1a3]">0.00eth</Text>
+                            <Text className="text-white font-bold">{item?.type}</Text>
+                            <Text className="text-[#9fa1a3]">{item?.amount}</Text>
                           </View>
                         </View>
                         <View className="flex flex-col">
                           <Text className="text-[#9fa1a3]">
-                            From: 0xb3...dsfb
+                            From: {item?.from?.slice(0, 6)}...{item?.from?.slice(-6)}
                           </Text>
                           <Text className="text-[#9fa1a3]">
-                            {" "}
-                            To: 0xbz..rtyht
+                            To: {item?.to?.slice(0, 6)}...{item?.to?.slice(-6)}
                           </Text>
                         </View>
                       </View>
@@ -195,10 +217,9 @@ const UserWalletScreen = () => {
               ) : (
                 //borrow tab content
                 <View className="flex flex-col space-y-2">
-                  {[
-                    1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19,
-                  ].map((item) => (
-                    <View key={item}>
+                  {
+                  borrowData.map((item, index) => (
+                    <View key={index}>
                       <View className=" bg-[#10131A]  h-[75px] flex justify-between flex-row items-center px-5 rounded-[25px]">
                         <View className="flex flex-row items-center space-x-2">
                           <Image
@@ -208,14 +229,15 @@ const UserWalletScreen = () => {
                             }}
                           />
                           <View className="flex flex-col">
-                            <Text className="text-white font-bold">Send</Text>
-                            <Text className="text-[#9fa1a3]">0.00eth</Text>
+                            <Text className="text-white font-bold">{item?.lender?.slice(0, 6)}...{item?.lender?.slice(-6)}</Text>
+                            <Text className="text-[#9fa1a3]"> {item?.amount?.slice(0, 6)}...{item?.amount?.slice(-6)}</Text>
                           </View>
                         </View>
                         <BorrowModal />
                         <TouchableOpacity
                           className=" bg-[#171A25] border border-[#7264FF] flex items-center  rounded-3xl py-3 px-5"
-                          onPress={() => setBorrowModalVisible(true)}
+                          onPress={() => {setBorrowModalVisible(true);
+                            setCurrBorrowData({lender: item?.lender, amount: item?.amount})}}
                         >
                           <Text className="text-white text-xs font-bold">
                             Borrow

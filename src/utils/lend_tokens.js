@@ -1,9 +1,7 @@
 import { pool } from "./contracts";
 const { BigNumber } = require('ethers')
 import { submitTransaction } from "./contracts";
-import { setData } from "../../firebase.config";
-
-
+import { setBorrowList, setTX } from "./setter";
 
 
 export async function supply(user, amountSupply, signer, onBehalfOf) {
@@ -24,18 +22,22 @@ export async function supply(user, amountSupply, signer, onBehalfOf) {
     await submitTransaction({ tx: tx }, signer)
   }
 
-  // firebase data to be add
-  // const data = {
-  //   borrowDetails: [
-  //     {
-  //       amount: amountSupply,
-  //       lender: signer.address
-  //     }
-  //   ]
-  // };
-  // console.log(data)
-
   // await setData('borrowList', onBehalfOf || user, data);
+      //set data to backend
+        await setTX(
+          signer.address,
+          "supply",
+          signer.address,
+          "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+          amountSupply
+      ) 
+
+      await setBorrowList(
+        signer.address,
+        onBehalfOf || user,
+        amountSupply
+
+      )
 
 }
 

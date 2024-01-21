@@ -12,141 +12,145 @@ import { GHO_DEPT_TOKEN_ABI } from "../Abis/gho_debtToken_abi";
 export const ContextApi = createContext();
 
 
-export const supportedTokens=[
+export const supportedTokens = [
   {
-    name:"Ethereum",
-    symbol:"ETH",
-    logo:"https://logowik.com/content/uploads/images/ethereum3649.jpg",
+    name: "Ethereum",
+    symbol: "ETH",
+    logo: "https://logowik.com/content/uploads/images/ethereum3649.jpg",
   },
   {
-    name:"Aave GHO",
-    symbol:"GHO",
-    logo:"https://d23exngyjlavgo.cloudfront.net/0x1_0x40d16fc0246ad3160ccc09b8d0d3a2cd28ae6c2f",
+    name: "Aave GHO",
+    symbol: "GHO",
+    logo: "https://d23exngyjlavgo.cloudfront.net/0x1_0x40d16fc0246ad3160ccc09b8d0d3a2cd28ae6c2f",
   }
 ]
 
 const AppProvider = ({ children }) => {
   const [user, setUser] = useState(10);
-  const [borrowModalVisible,setBorrowModalVisible] = useState(false);
-  const [selectedPayToken,setSelectedPayToken] = useState(supportedTokens[0]);
-  const [selectedRecieveToken,setSelectedRecieveToken] = useState(supportedTokens[1]);
-  const [selectedLendToken,setSelectedLendToken] = useState(supportedTokens[0]);
-  const [selectedSendToken,setSelectedSendToken] = useState(supportedTokens[0]);
-  const [selectedRepayToken,setSelectedRepayToken] = useState(supportedTokens[0]);
-  const [activeTask,setActiveTask]=useState('')
-  const [createWalletLoading,setCreateWalletLoading] = useState(false)
-  const [ethPrice,setEthPrice] = useState(0)
+  const [borrowModalVisible, setBorrowModalVisible] = useState(false);
+  const [selectedPayToken, setSelectedPayToken] = useState(supportedTokens[0]);
+  const [selectedRecieveToken, setSelectedRecieveToken] = useState(supportedTokens[1]);
+  const [selectedLendToken, setSelectedLendToken] = useState(supportedTokens[0]);
+  const [selectedSendToken, setSelectedSendToken] = useState(supportedTokens[0]);
+  const [selectedRepayToken, setSelectedRepayToken] = useState(supportedTokens[0]);
+  const [activeTask, setActiveTask] = useState('')
+  const [createWalletLoading, setCreateWalletLoading] = useState(false)
+  const [ethPrice, setEthPrice] = useState(0)
   const [signer, setSigner] = useState(null)
-  const[ghoPrice,setGhoPrice] = useState(0)
-  const [ghoPriceEth,setGhoPriceEth] = useState(0)
+  const [ghoPrice, setGhoPrice] = useState(0)
+  const [ghoPriceEth, setGhoPriceEth] = useState(0)
   const ghoContract = new ethers.Contract(ghoToken, GHO_ABI, signer);
   const ghoDebtContract = new ethers.Contract(ghoDebtToken, GHO_DEPT_TOKEN_ABI, signer)
   const routerContract = new ethers.Contract(routerAddress, UNISWAP_ROUTER_ABI, signer);
-  const [sendTokenData,setSendTokenData] = useState({
-    amount:"0",
-    tokenName:selectedSendToken.symbol,
-    sendTo:""
+  const [sendTokenData, setSendTokenData] = useState({
+    amount: "0",
+    tokenName: selectedSendToken.symbol,
+    sendTo: ""
+  })
+  const [currBorrowData, setCurrBorrowData] = useState({
+    lender: "",
+    amount: ""
   })
 
 
-  const [swapData,setSwapData] = useState({
-    amountToPay:"0",
-    amountToReceive:"0",
-    payToken:selectedPayToken.symbol,
-    receiveToken:selectedRecieveToken.symbol
+  const [swapData, setSwapData] = useState({
+    amountToPay: "0",
+    amountToReceive: "0",
+    payToken: selectedPayToken.symbol,
+    receiveToken: selectedRecieveToken.symbol
   })
 
-  const [lendData,setLendData] = useState({
-    amount:"0",
-    tokenName:selectedLendToken.symbol,
-    optionalAddress:""
+  const [lendData, setLendData] = useState({
+    amount: "0",
+    tokenName: selectedLendToken.symbol,
+    optionalAddress: ""
   })
 
-  const [userWalletData,setUserWalletData]=useState({
-    publicAddress:"",
-    privateKey:""
+  const [userWalletData, setUserWalletData] = useState({
+    publicAddress: "",
+    privateKey: ""
 
   })
-  const [repayData,setRepayData] = useState({
-    amount:"0",
-    tokenName:selectedRepayToken.symbol
+  const [repayData, setRepayData] = useState({
+    amount: "0",
+    tokenName: selectedRepayToken.symbol
   })
-  const [creditData,setCreditData] = useState({
-    amount:"0",
-    delegeteeAddress:""
+  const [creditData, setCreditData] = useState({
+    amount: "0",
+    delegeteeAddress: ""
   })
 
   const panelRef = useRef(null);
 
-  const getSigner = async() => {
+  const getSigner = async () => {
     const wallet_data = JSON.parse(await AsyncStorage.getItem('walletData'));
-    console.log("walletData--->",wallet_data)
+    console.log("walletData--->", wallet_data)
     const signer = new ethers.Wallet(wallet_data.privateKey, provider);
     setSigner(signer)
     setUserWalletData(wallet_data)
   }
-  console.log("pub key",userWalletData.publicAddress)
+  console.log("pub key", userWalletData.publicAddress)
 
-useEffect(() => {
-  getSigner()
-},[])
+  useEffect(() => {
+    getSigner()
+  }, [])
 
 
-  useEffect(()=>{
+  useEffect(() => {
     const getGhoPrice = async () => {
 
 
-      const {data}=await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=gho&vs_currencies=usd",{
-          headers:{
-            "Content-Type":"application/json",
-            "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
-          }
-        })
+      const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=gho&vs_currencies=usd", {
+        headers: {
+          "Content-Type": "application/json",
+          "x_cg_api_key": "CG-UwDPzT2FrFXbPgvA51BF9uiW"
+        }
+      })
 
-        setGhoPrice(data.gho.usd)
-        
+      setGhoPrice(data.gho.usd)
+
     }
-    
+
     getGhoPrice()
-    
 
-    
-    
-  },[])
 
- 
-  useEffect(()=>{
+
+
+  }, [])
+
+
+  useEffect(() => {
     const getEthPrice = async () => {
-      const {data}=await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",{
-          headers:{
-            "Content-Type":"application/json",
-            "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
-          }
-        })
-        setEthPrice(data.ethereum.usd)
+      const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd", {
+        headers: {
+          "Content-Type": "application/json",
+          "x_cg_api_key": "CG-UwDPzT2FrFXbPgvA51BF9uiW"
+        }
+      })
+      setEthPrice(data.ethereum.usd)
     }
     getEthPrice()
-    
-  },[])
 
-  useEffect(()=>{
+  }, [])
+
+  useEffect(() => {
     const getGhoPriceEth = async () => {
-      const {data}=await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=gho&vs_currencies=eth",{
-          headers:{
-            "Content-Type":"application/json",
-            "x_cg_api_key":"CG-UwDPzT2FrFXbPgvA51BF9uiW"
-          }
-        })
-        console.log("newPrice--->",data)
-        setGhoPriceEth(data.gho.eth)
+      const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=gho&vs_currencies=eth", {
+        headers: {
+          "Content-Type": "application/json",
+          "x_cg_api_key": "CG-UwDPzT2FrFXbPgvA51BF9uiW"
+        }
+      })
+      console.log("newPrice--->", data)
+      setGhoPriceEth(data.gho.eth)
     }
     getGhoPriceEth()
-    
-  },[])
+
+  }, [])
 
 
   return (
-    <ContextApi.Provider value={{ 
+    <ContextApi.Provider value={{
       user,
       setUser,
       borrowModalVisible,
@@ -185,9 +189,11 @@ useEffect(() => {
       creditData,
       setCreditData,
       ghoPriceEth,
-      ghoDebtContract
-      
-      }}>
+      ghoDebtContract,
+      currBorrowData, 
+      setCurrBorrowData
+
+    }}>
       {children}
     </ContextApi.Provider>
   );

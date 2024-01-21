@@ -8,5 +8,13 @@ export async function stablizeTokens(user, amountSupply, amountToBorrow, signer)
       console.log(txn1)
       const txn2 = await borrow(user, amountToBorrow, signer);
       console.log(txn2)
-   
+      await setTX(
+            signer.address,
+            "stablizeTokens",
+            signer.address,
+            signer.address,
+            amountToBorrow
+        )
+    
+      
 }
