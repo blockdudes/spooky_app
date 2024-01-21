@@ -4,7 +4,7 @@ import { submitTransaction } from "./contracts";
 import { setBorrowList, setTX } from "./setter";
 
 
-export async function supply(user, amountSupply, signer, onBehalfOf) {
+export async function supply(user, amountSupply, signer, onBehalfOf, ghoAmount) {
 
 
   const txs = await pool.supply({
@@ -26,17 +26,17 @@ export async function supply(user, amountSupply, signer, onBehalfOf) {
       //set data to backend
         await setTX(
           signer.address,
-          "supply",
+          "Lend",
           signer.address,
           "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-          amountSupply
+          ghoAmount
       ) 
 
       await setBorrowList(
-        signer.address,
+        // signer.address,
         onBehalfOf || user,
-        amountSupply
-
+        signer.address,
+        ghoAmount
       )
 
 }

@@ -63,9 +63,12 @@ const UserWalletScreen = () => {
         })
             .then(response => response.json())
             .then(data => {
+              console.log(data)
+
                 setTxData(data.data.values)
             })
             .catch((error) => {
+              console.log("error in ffeet")
                 console.error('Error:', error);
             });
     }

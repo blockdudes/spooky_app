@@ -267,8 +267,8 @@ const SwapModal = () => {
               </TouchableOpacity>
 
                 ):(
-                  <TouchableOpacity className=" rounded-[30px] mt-8  bg-[#9fa1a3] py-4" onPress={() => { swap() }}>
-                <Text className="text-xl text-center font-semibold   text-[#10131a]">Swap</Text>
+                  <TouchableOpacity className=" rounded-[30px] mt-8  bg-white py-4" onPress={() => { swap() }}>
+                <Text className="text-xl text-center font-semibold   text-black">Swap</Text>
               </TouchableOpacity>
                 )
               }

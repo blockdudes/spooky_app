@@ -21,7 +21,7 @@ const LendingModal = () => {
   const [payAmount, setPayAmount] = useState("0")
   const [sendAddress, setSendAddress] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const { signer, selectedLendToken, setSelectedLendToken, panelRef, ethPrice, ghoPrice, userWalletData, lendData, setLendData } = useContext(ContextApi)
+  const { signer, selectedLendToken, setSelectedLendToken, panelRef, ethPrice, ghoPrice, userWalletData, lendData, setLendData, ghoPriceEth } = useContext(ContextApi)
   console.log(payAmount)
   console.log(selectedLendToken)
   const [status, setStatus] = useState(0)
@@ -32,15 +32,17 @@ const LendingModal = () => {
     setIsLoading(true)
     setStatus(1)
     try {
-      const txnRes = await supply(userWalletData.publicAddress, lendData.amount, signer, lendData.optionalAddress)
+      console.log("ssusususdf")
+      console.log(lendData.amount)
+      console.log(ethPrice)
+      const supplyAmount = lendData.amount / ethPrice * 1.60
+      console.log(supplyAmount)
+      const txnRes = await supply(userWalletData.publicAddress, supplyAmount, signer, lendData.optionalAddress, lendData.amount)
       setIsLoading(false)
+      setStatus(2)
       if(txnRes){
-        setStatus(2)
 
         successToast("Token lend successfully")
-      }else{
-        setStatus(3)
-
       }
     } catch (error) {
       setIsLoading(false)
@@ -152,11 +154,11 @@ const LendingModal = () => {
                     onChangeText={(text) => setLendData({ ...lendData, optionalAddress: text })}
                     value={lendData.optionalAddress}
                     placeholderTextColor={'#9fa1a3'}
-                    te
+                    
                   />
                   
                 </View>
-
+{/* 
                 <View>
                   <TextInput
                     className="text-[#ffffff] border border-[#9fa1a3]/20  h-[60px] px-6  rounded-[30px] text-lg"
@@ -168,7 +170,7 @@ const LendingModal = () => {
                     te
                   />
                   
-                </View>
+                </View> */}
                 {
                   isLoading ? (
 
@@ -178,8 +180,8 @@ const LendingModal = () => {
                     </TouchableOpacity>
                   ) : (
 
-                    <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 py-4" onPress={() => handleLendBtn()}>
-                      <Text className="text-xl text-center font-semibold  text-[#10131a]">Lend</Text>
+                    <TouchableOpacity className=" rounded-[30px] bg-white py-4" onPress={() => handleLendBtn()}>
+                      <Text className="text-xl text-center font-semibold  text-black">Lend</Text>
                     </TouchableOpacity>
                   )
                 }

@@ -121,12 +121,15 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const getEthPrice = async () => {
+      console.log("ee2rherhhsdf")
       const { data } = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd", {
         headers: {
           "Content-Type": "application/json",
           "x_cg_api_key": "CG-UwDPzT2FrFXbPgvA51BF9uiW"
         }
       })
+      console.log("eerherhhsdf")
+      console.log(data.ethereum.usd)
       setEthPrice(Number(data.ethereum.usd).toFixed(2))
 
     }

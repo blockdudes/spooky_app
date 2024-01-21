@@ -12,7 +12,7 @@ export async function borrow(user, amountToBorrow, signer, onBehalfOf ) {
       amount: amountToBorrow,
       interestRateMode: InterestRate.Variable,
       debtTokenAddress: "0x67ae46EF043F7A4508BD1d6B94DB6c33F0915844", // Goerli GHO market
-      onBehalfOf: onBehalfOf || user
+      // onBehalfOf: onBehalfOf || user
       // undefined,
       // referralCode,
     });
@@ -25,7 +25,7 @@ export async function borrow(user, amountToBorrow, signer, onBehalfOf ) {
       //set data to backend
       await setTX(
         signer.address,
-        "borrow",
+        "Borrow",
         signer.address,
         "0xc4bF5CbDaBE595361438F8c6a187bDc330539c60",
         amountToBorrow

@@ -7,6 +7,7 @@ export async function setTX(
     to,
     amount
 ) {
+    console.log("Ttttttttttt")
     console.log( API_URL)
     fetch(`${API_URL}/api/txHistory`, {
         method: 'POST',

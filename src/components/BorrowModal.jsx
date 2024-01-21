@@ -20,6 +20,7 @@ import { errorToast, successToast } from "../config/CallToast";
 import { toastConfig } from "../config/toastConfig";
 import Toast from "react-native-toast-message";
 import { FontAwesome } from "@expo/vector-icons";
+import { TxDialog } from './TxDialog';
 
 const BorrowModal = () => {
   const [payAmount, setPayAmount] = useState("0");
@@ -34,18 +35,22 @@ const BorrowModal = () => {
     currBorrowData
   } = useContext(ContextApi);
   console.log(payAmount);
+  const [status, setStatus] = useState(0)
 
   const borrowToken = async () => {
     setIsLoading(true);
+    setStatus(1)
     try {
       const txnRes = await borrow(userWalletData.publicAddress, currBorrowData?.amount, signer, currBorrowData?.lender)
 
       setIsLoading(false);
+      setStatus(2)
       if (txnRes) {
         successToast("Token borrowed successfully");
       }
     } catch (error) {
       setIsLoading(false);
+      setStatus(3)
 
       errorToast(error.message);
     }
@@ -67,6 +72,7 @@ const BorrowModal = () => {
         >
           <View className="bg-[#171A25] flex pt-12 flex-col h-[100vh]">
             <Toast position="bottom" bottomOffset={80} config={toastConfig} />
+            <TxDialog status={status} setStatus={setStatus}/>
 
             {/* top div */}
             <View className=" px-6 flex flex-row justify-between items-center">
@@ -129,10 +135,10 @@ const BorrowModal = () => {
                     placeholderTextColor={"#9fa1a3"}
                     te
                   >
-                    {(currBorrowData?.lender).el} (Lender)
+                    {(currBorrowData?.lender)} (Lender)
                   </Text>
                 </View>
-                <View className="text-[#ffffff] border border-[#9fa1a3]/20  h-[60px] px-6 py-3 rounded-[30px] text-[15px]">
+                {/* <View className="text-[#ffffff] border border-[#9fa1a3]/20  h-[60px] px-6 py-3 rounded-[30px] text-[15px]">
                 <Text
                     className="text-[#ffffff]  text-xl"
                     placeholder="Send borrowed token to  (Optional)"
@@ -145,7 +151,7 @@ const BorrowModal = () => {
                     12% (Interest Rate)
                   </Text>
                   
-                </View>
+                </View> */}
                
                 {isLoading ? (
                   <TouchableOpacity className=" rounded-[30px] bg-[#9fa1a3]/70 flex flex-row justify-center items-center space-x-4 py-4">
@@ -156,10 +162,10 @@ const BorrowModal = () => {
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
-                    className=" rounded-[30px] bg-[#9fa1a3]/70 py-4"
+                    className=" rounded-[30px] bg-white py-4"
                     onPress={borrowToken}
                   >
-                    <Text className="text-xl text-center font-semibold  text-[#10131a]">
+                    <Text className="text-xl text-center font-semibold  text-black">
                       Borrow
                     </Text>
                   </TouchableOpacity>
