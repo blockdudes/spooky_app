@@ -9,6 +9,8 @@ import QrScannerModal from './QrScannerModal';
 import { ContextApi } from '../providers/store';
 import { repayTx } from '../utils/repay_token';
 import { errorToast, successToast } from '../config/CallToast';
+import { TxCompleteDialog, TxSuccessDialog } from './TxSuccessDialog';
+import { TxFailedDialog } from './TxFailedDialog';
 
 
 
@@ -17,6 +19,9 @@ const RepayModal = () => {
   const {panelRef,ethPrice,ghoPrice, selectedRepayToken,setSelectedRepayToken,repayData,setRepayData,userWalletData,signer} = useContext(ContextApi)
   const [repayType, setRepayType] = useState("full")
   const [isLoading,setIsLoading]=useState(false)
+
+  const [isTxSuccess, setIsTxSuccess] = useState(false)
+  const [isTxFailed, setIsTxFailed] = useState(false)
   console.log(repayData)
 
   const repay=async()=>{
@@ -42,12 +47,14 @@ const RepayModal = () => {
 
   return (
     <View>
+      <TxSuccessDialog visible={isTxSuccess} setVisible={setIsTxSuccess}/>
+      <TxFailedDialog visible={isTxFailed} setVisible={setIsTxFailed}/>
       <View className="flex items-center space-y-2 mr-4">
 
-        <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-          <FontAwesome name="money" size={20} color="white" />
+        <TouchableOpacity className=" bg-[#2264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" >
+          <FontAwesome name="money" size={20} color="#9fa1a3" />
         </TouchableOpacity>
-        <Text className="text-white  ">Repay</Text>
+        <Text className="text-[#9fa1a3]  ">Repay</Text>
       </View>
 
       <Modal

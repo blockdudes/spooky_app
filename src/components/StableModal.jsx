@@ -4,7 +4,7 @@ import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { ContextApi, supportedTokens } from '../providers/store';
 import { stablizeTokens } from '../utils/stablize_tokens';
@@ -17,7 +17,8 @@ import Toast from "react-native-toast-message"
 const StableModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [payAmount, setPayAmount] = useState("0")
-  const {userWalletData,ghoPriceEth,signer} = useContext(ContextApi)
+  const [receiveAmount, setReceiveAmount] = useState("0")
+  const {userWalletData,ghoPriceEth,signer, ethPrice, ghoPrice} = useContext(ContextApi)
   const [isLoading,setIsLoading]=useState(false)
 
   console.log(payAmount)
@@ -28,7 +29,7 @@ const StableModal = () => {
     try {
       
       console.log("stabilize--->")
-      const txnRes=await stablizeTokens(userWalletData.publicAddress,payAmount,payAmount/ghoPriceEth,signer)
+      const txnRes=await stablizeTokens(userWalletData.publicAddress,payAmount,receiveAmount,signer)
       
 
       setIsLoading(false)
@@ -42,7 +43,8 @@ const StableModal = () => {
     }
   }
 
-
+console.log("ghoPriceEth")
+console.log(ghoPriceEth)
 
   return (
     <SafeAreaView>
@@ -51,9 +53,9 @@ const StableModal = () => {
         <View className="flex items-center space-y-2 mr-4">
 
           <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="money" size={20} color="white" />
+          <Feather name="dollar-sign" size={20} color="white" />
           </TouchableOpacity>
-          <Text className="text-white  ">Stablize</Text>
+          <Text className="text-white  ">Stabilize</Text>
         </View>
 
         <Modal
@@ -75,10 +77,10 @@ const StableModal = () => {
                   <Entypo name="chevron-small-left" size={30} color="white" />
                 </View>
               </TouchableOpacity>
-              <Text className="text-white text-center text-lg semibold">Stabilize your ETH</Text>
-              <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
+              <Text className="text-white text-center text-lg semibold">Stabilize</Text>
+              <View className='px-5 py-2 rounded-3xl'>
 
-                <AntDesign name="scan1" size={20} color="white" />
+                {/* <AntDesign name="scan1" size={24} color="white" /> */}
               </View>
             </View>
 
@@ -107,7 +109,7 @@ const StableModal = () => {
                   </View>
                   {/* //youpay div */}
                   <View className="flex flex-row items-center justify-between">
-                    <Text className="text-white font-bold text-lg">You Pay</Text>
+                    <Text className="text-white font-bold text-lg">You Lend</Text>
                     <View className="flex flex-col items-end gap-2">
                       <TextInput
                         className="text-white text-xl  max-w-[150px]"
@@ -117,7 +119,7 @@ const StableModal = () => {
                         placeholder='0.0'
                         placeholderTextColor={'#9fa1a3'}
                       />
-                      <Text className="text-[#9fa1a3]">$0.00</Text>
+                      <Text className="text-[#9fa1a3]">{Number(payAmount * ethPrice).toFixed(1)}</Text>
                     </View>
                   </View>
                 </View>
@@ -147,10 +149,19 @@ const StableModal = () => {
                   </View>
                   {/* //youpay div */}
                   <View className="flex flex-row items-center justify-between">
-                    <Text className="text-white font-semibold text-lg">You Get</Text>
+                    <Text className="text-white font-semibold text-lg">You Borrow</Text>
                     <View className="flex flex-col items-end gap-2">
-                      <Text className="text-white text-xl">{payAmount/ghoPriceEth}</Text>
-                      <Text className="text-[#9fa1a3]">$0.00</Text>
+                    <TextInput
+                        className="text-white text-xl  max-w-[150px]"
+                        onChangeText={setReceiveAmount}
+                        value={receiveAmount}
+                        keyboardType="numeric"
+                        placeholder='0.0'
+                        placeholderTextColor={'#9fa1a3'}
+                      />
+                      {/* <Text className="text-white text-xl">{payAmount/ghoPriceEth}</Text> */}
+                      <Text className="text-[#9fa1a3]">${Number(receiveAmount * ghoPrice).toFixed(1)}</Text>
+                      {Number(payAmount) > 0  && <Text className="text-[#9fa1a3]">{Number(Number(payAmount) / ghoPriceEth * 0.6) + " (Max)"} </Text>}
                     </View>
                   </View>
                 </View>

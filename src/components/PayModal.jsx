@@ -13,6 +13,8 @@ import { ContextApi } from '../providers/store';
 import { errorToast, successToast } from '../config/CallToast';
 import { sendEth, sendGho } from '../utils/send_token';
 import { provider } from '../utils/contracts';
+import { TxSuccessDialog } from './TxSuccessDialog';
+import { TxFailedDialog } from './TxFailedDialog';
 
 
 
@@ -22,6 +24,8 @@ const PayModal = () => {
 
   const { signer, ethPrice, ghoPrice, panelRef, selectedSendToken, setSendTokenData, sendTokenData, ghoContract } = useContext(ContextApi)
 
+  const [isTxSuccess, setIsTxSuccess] = useState(false)
+  const [isTxFailed, setIsTxFailed] = useState(false)
 
 
   const sendEthToken = async () => {
@@ -44,6 +48,7 @@ const PayModal = () => {
 
   const sendGhoToken = async () => {
       setIsLoading(true)
+      setIsTxSuccess(true)
     try {
       const txnRes = await sendGho(signer, ghoContract, sendTokenData.sendTo, sendTokenData.amount.toString())
       setIsLoading(false)
@@ -68,6 +73,9 @@ const PayModal = () => {
     <SafeAreaView>
 
       <View>
+
+      <TxSuccessDialog visible={isTxSuccess} setVisible={setIsTxSuccess}/>
+      <TxFailedDialog visible={isTxFailed} setVisible={setIsTxFailed}/>
         <View className="flex items-center space-y-2 mr-4">
           <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
             <FontAwesome name="send" size={20} color="white" />

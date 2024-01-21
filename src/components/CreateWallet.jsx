@@ -67,7 +67,7 @@ const CreateWallet = () => {
           </View>
         ) : (
           <>
-          <DoneAlert />
+          {/* <DoneAlert /> */}
             <View className="h-[55%]  flex justify-center" >
               <Image
                 className="h-[300px]  w-[300px] object-cover self-center mt-8"

@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import SwapModal from "../components/SwapModal";
@@ -89,6 +90,7 @@ const UserWalletScreen = () => {
   }, [signer,activeTab]);
 
  
+
 
   const copyToClipBoard = async () => {
     const status = await Clipboard.setStringAsync(userWalletData.publicAddress);
@@ -217,7 +219,7 @@ const UserWalletScreen = () => {
                         </View>
                       </View>
                     </View>
-                  ))}
+                  ))} 
                 </View>
               ) : (
                 //borrow tab content

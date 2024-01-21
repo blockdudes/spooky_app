@@ -7,9 +7,10 @@ import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import BarCode from './BarCode';
-import QRCode from "react-native-qrcode-svg"
+import QRCodeStyled from 'react-native-qrcode-styled';
 import * as Clipboard from 'expo-clipboard';
 import { ContextApi } from '../providers/store';
+import Qrcode from './Qrcode';
 
 
 const RecieveModal = () => {
@@ -40,7 +41,7 @@ const RecieveModal = () => {
           <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex  items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
             <FontAwesome name="arrow-down" size={20} color="white" />
           </TouchableOpacity>
-          <Text className="text-white  ">Recieve</Text>
+          <Text className="text-white  ">Receive</Text>
         </View>
 
         <Modal
@@ -58,10 +59,10 @@ const RecieveModal = () => {
                   <Entypo name="chevron-small-left" size={30} color="white" />
                 </View>
               </TouchableOpacity>
-              <Text className="text-white text-center text-lg semibold">Recieve Token</Text>
-              <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
+              <Text className="text-white text-center text-lg semibold">Receive Token</Text>
+              <View className=' px-5 py-2 rounded-3xl'>
 
-                <AntDesign name="scan1" size={20} color="white" />
+                {/* <AntDesign name="scan1" size={20} color="white" /> */}
               </View>
             </View>
 
@@ -78,15 +79,22 @@ const RecieveModal = () => {
                     {/* <Text style={styles.sectionTitle}>Generate QRCode</Text> */}
                     <View style={styles.row}>
                     </View>
-                    <View className="bg-white p-4 rounded-xl items-center">
+                    <View className=" p-4 rounded-xl items-center">
+                    <Qrcode
+                        data={userWalletData.publicAddress ? userWalletData.publicAddress : 'NA'}
+                        // data={'Simple QR Code'}
+  // style={{backgroundColor: 'white'}}
+  // padding={20}
+  // pieceSize={8}
+/>
 
-                      <QRCode
+                      {/* <QRCode
                         size={200}
                         value={userWalletData.publicAddress ? userWalletData.publicAddress : 'NA'}
 
                         logoSize={60}
                         getRef={ref}
-                      />
+                      /> */}
                     </View>
                   </View>
 

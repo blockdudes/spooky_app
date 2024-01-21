@@ -4,7 +4,7 @@ import { Entypo } from '@expo/vector-icons';
 import SwapUiComponent from './SwapUiComponent';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { ContextApi, supportedTokens } from '../providers/store';
 import SheetModal from './SheetModal';
 import { supply } from '../utils/lend_tokens';
@@ -56,7 +56,7 @@ const LendingModal = () => {
       <View>
         <View className="flex items-center space-y-2 mr-4">
           <TouchableOpacity className=" bg-[#7264FF]  rounded-2xl w-[70px] flex items-center py-4 px-5" onPress={() => setModalVisible(true)}>
-            <FontAwesome name="bank" size={20} color="white" />
+          <FontAwesome5 name="handshake" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Lend</Text>
         </View>
@@ -79,9 +79,9 @@ const LendingModal = () => {
                 </View>
               </TouchableOpacity>
               <Text className="text-white text-center text-lg semibold">Lend Token</Text>
-              <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
+              <View className='px-5 py-2 rounded-3xl'>
 
-                <AntDesign name="scan1" size={20} color="white" />
+                {/* <AntDesign name="scan1" size={20} color="white" /> */}
               </View>
             </View>
 
@@ -110,11 +110,26 @@ const LendingModal = () => {
                       <Image
                         className="h-[35px] rounded-full  w-[35px] object-cover self-center"
                         source={{
+                          uri: supportedTokens[1].logo,
+                        }}
+                      />
+                      <Text className="text-white text-xl">{supportedTokens[1].symbol}</Text>
+                      <Text className="text-[#9fa1a3]">{supportedTokens[1].name}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <View className="  flex items-center border border-[#9fa1a3]/20  justify-center space-x-3 flex-row px-6 py-2 h-[60px] rounded-[30px]">
+                    <View className="flex flex-row items-center gap-2">
+                        
+                      <Image
+                        className="h-[35px] rounded-full  w-[35px] object-cover self-center"
+                        source={{
                           uri: supportedTokens[0].logo,
                         }}
                       />
                       <Text className="text-white text-xl">{supportedTokens[0].symbol}</Text>
-                      <Text className="text-[#9fa1a3]">{supportedTokens[0].name}</Text>
+                      <Text className="text-[#9fa1a3]">{supportedTokens[0].name + " (Lending Token)"}</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -124,13 +139,26 @@ const LendingModal = () => {
                 <View>
                   <TextInput
                     className="text-[#ffffff] border border-[#9fa1a3]/20  h-[60px] px-6  rounded-[30px] text-lg"
-                    placeholder='On Behalf of (Optional)'
+                    placeholder='Borrower'
                     onChangeText={(text) => setLendData({ ...lendData, optionalAddress: text })}
                     value={lendData.optionalAddress}
+                    placeholderTextColor={'#9fa1a3'}
+                    te
+                  />
+                  
+                </View>
+
+                <View>
+                  <TextInput
+                    className="text-[#ffffff] border border-[#9fa1a3]/20  h-[60px] px-6  rounded-[30px] text-lg"
+                    placeholder='Interest Rate %'
+                    onChangeText={(text) => setLendData({ ...lendData, interestRate: text })}
+                    value={lendData.interestRate}
                     keyboardType="phone-pad"
                     placeholderTextColor={'#9fa1a3'}
                     te
                   />
+                  
                 </View>
                 {
                   isLoading ? (

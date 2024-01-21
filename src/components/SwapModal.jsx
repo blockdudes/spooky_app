@@ -15,6 +15,7 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from '../config/toastConfig';
 
 
+import { FontAwesome } from '@expo/vector-icons';
 
 const SwapModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -112,7 +113,7 @@ const SwapModal = () => {
         <View className="flex items-center space-y-2 mr-4">
 
           <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
-            <Entypo name="wallet" size={20} color="white" />
+          <FontAwesome name="exchange" size={24} color="white" />  
           </TouchableOpacity>
           <Text className="text-white ">Swap</Text>
         </View>
@@ -137,9 +138,9 @@ const SwapModal = () => {
                 </View>
               </TouchableOpacity>
               <Text className="text-white text-center text-lg semibold">Swap Tokens</Text>
-              <View className='bg-[#10131A]/70 px-5 py-2 rounded-3xl'>
+              <View className='px-5 py-2 rounded-3xl'>
 
-                <AntDesign name="scan1" size={20} color="white" />
+                {/* <AntDesign name="scan1" size={20} color="white" /> */}
               </View>
             </View>
 
@@ -149,8 +150,8 @@ const SwapModal = () => {
                 <View className="flex flex-col border border-[#9fa1a3]/20 rounded-3xl space-y-1 bg-[#10131A] h-[50%] p-4">
                   <View className="flex flex-row justify-between ">
                     <TouchableOpacity onPress={() => {
-                      setActiveTask("pay")
-                      panelRef.current.togglePanel()
+                      // setActiveTask("pay")
+                      // panelRef.current.togglePanel()
                     }}>
                       <View className="flex items-center space-x-3 flex-row  py-2 rounded-2xl">
                         <Image
@@ -189,21 +190,26 @@ const SwapModal = () => {
                         placeholder='0.00'
                         placeholderTextColor={'#9fa1a3'}
                       />
-                      <Text className="text-[#9fa1a3]">${selectedPayToken.symbol === "ETH" ? Number(swapData.amountToPay || 0) * ethPrice : Number(swapData.amountToPay || 0) * ghoPrice}</Text>
+                      <Text className="text-[#9fa1a3]">${Number(selectedPayToken.symbol === "ETH" ? Number(swapData.amountToPay || 0) * ethPrice : Number(swapData.amountToPay || 0) * ghoPrice).toFixed(2)}</Text>
                     </View>
                   </View>
                 </View>
 
 
                 <View className="absolute left-[48%] top-[42%] z-10  h-[45px] w-[45px] bg-[#7264ff]  flex justify-center items-center  rounded-full border">
-                  <AntDesign name="arrowdown" size={24} color="white" />
+                  <AntDesign name="arrowdown" size={24} color="white" onPress={()=>{
+                      const payToken = selectedRecieveToken
+                      const receiveToken = selectedPayToken
+                      setSelectedPayToken(payToken)
+                      setSelectedRecieveToken(receiveToken)
+                  }}/>
                 </View>
 
                 <View className="flex flex-col border border-[#9fa1a3]/20 rounded-3xl space-y-1 bg-[#10131A] h-[50%] p-4">
                   <View className="flex flex-row justify-between ">
                     <TouchableOpacity onPress={() => {
-                      setActiveTask("recieve")
-                      panelRef.current.togglePanel()
+                      // setActiveTask("recieve")
+                      // panelRef.current.togglePanel()
                     }}>
                       <View className="flex items-center space-x-3 flex-row  py-2 rounded-2xl">
                         <Image
@@ -238,7 +244,7 @@ const SwapModal = () => {
                         value={swapData.amountToReceive}
                         onChangeText={(text)=>setSwapData({...swapData,amountToReceive:text})}
                       /> */}
-                      <Text className="text-white text-lg  max-w-[150px]">{swapData.amountToPay && getOutPrice}</Text>
+                      <Text className="text-white text-lg  max-w-[150px]">{Number(getOutPrice).toFixed(2)}</Text>
                       {/* <Text className="text-[#9fa1a3]">${selectedRecieveToken.symbol === "ETH" ? Number(swapData.amountToReceive || 0) * ethPrice : Number(swapData.amountToReceive || 0) * ghoPrice}</Text> */}
                     </View>
                   </View>

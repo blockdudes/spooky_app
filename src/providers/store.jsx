@@ -30,7 +30,7 @@ const AppProvider = ({ children }) => {
   const [borrowModalVisible, setBorrowModalVisible] = useState(false);
   const [selectedPayToken, setSelectedPayToken] = useState(supportedTokens[0]);
   const [selectedRecieveToken, setSelectedRecieveToken] = useState(supportedTokens[1]);
-  const [selectedLendToken, setSelectedLendToken] = useState(supportedTokens[0]);
+  const [selectedLendToken, setSelectedLendToken] = useState(supportedTokens[1]);
   const [selectedSendToken, setSelectedSendToken] = useState(supportedTokens[0]);
   const [selectedRepayToken, setSelectedRepayToken] = useState(supportedTokens[0]);
   const [activeTask, setActiveTask] = useState('')
@@ -107,7 +107,7 @@ const AppProvider = ({ children }) => {
         }
       })
 
-      setGhoPrice(data.gho.usd)
+        setGhoPrice(Number(data.gho.usd).toFixed(2))
 
     }
 
@@ -127,7 +127,8 @@ const AppProvider = ({ children }) => {
           "x_cg_api_key": "CG-UwDPzT2FrFXbPgvA51BF9uiW"
         }
       })
-      setEthPrice(data.ethereum.usd)
+      setEthPrice(Number(data.ethereum.usd).toFixed(2))
+
     }
     getEthPrice()
 
@@ -142,7 +143,7 @@ const AppProvider = ({ children }) => {
         }
       })
       console.log("newPrice--->", data)
-      setGhoPriceEth(data.gho.eth)
+        setGhoPriceEth(Number(data.gho.eth).toFixed(4))
     }
     getGhoPriceEth()
 
