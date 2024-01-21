@@ -55,7 +55,6 @@ const SwapModal = () => {
     setIsLoading(true)
     try {
       const txn=await swapETHForExactTokens(
-        ghoContract,
         routerContract,
         swapData.amountToPay,
         getOutPrice,

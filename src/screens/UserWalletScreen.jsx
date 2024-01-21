@@ -113,7 +113,7 @@ const UserWalletScreen = () => {
                   <RepayModal />
                 </View>
                 <View className="flex flex-row justify-around">
-                  <CreditDelegation />
+                  {/* <CreditDelegation /> */}
                   {/* <BorrowModal/> */}
                 </View>
               </View>
