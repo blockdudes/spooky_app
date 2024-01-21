@@ -26,7 +26,6 @@ import { ethers } from "ethers";
 import { LinearGradient } from "expo-linear-gradient";
 import { Gradient } from "../components/Gradient";
 import { db } from "../../firebase.config";
-import { getTX } from "../utils/setter";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const UserWalletScreen = () => {
@@ -70,9 +69,14 @@ const UserWalletScreen = () => {
             });
     }
 
-     async function getBorrowList() {
+    async function getBorrowList() {
         fetch(`${API_URL}/api/borrowList/${signer.address}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 setBorrowData(data.data.values)
             })
@@ -82,8 +86,9 @@ const UserWalletScreen = () => {
     }
     getTX();
     getBorrowList();
-  }, [signer]);
+  }, [signer,activeTab]);
 
+ 
 
   const copyToClipBoard = async () => {
     const status = await Clipboard.setStringAsync(userWalletData.publicAddress);

@@ -1,6 +1,7 @@
 import { routerAddress } from "./contracts";
 import { ethers } from 'ethers';
 import { ghoToken, wethAddress } from './contracts';
+import { setTX } from "./setter";
 export async function swapTokensForEth(
   ghoContract,
   routerContract,
