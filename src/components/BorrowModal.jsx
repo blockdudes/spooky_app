@@ -47,12 +47,12 @@ const BorrowModal = () => {
     <SafeAreaView>
 
       <View>
-      <View className="flex items-center space-y-2 mr-4">
+      {/* <View className="flex items-center space-y-2 mr-4">
           <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setBorrowModalVisible(true)}>
           <FontAwesome name="credit-card" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Borrow</Text>
-        </View>
+        </View> */}
         <Modal
           animationType="slide"
           transparent={false}
