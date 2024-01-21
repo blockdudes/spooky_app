@@ -11,11 +11,10 @@ import { Gradient } from '../components/Gradient'
 const HomeScreen = () => {
   const { userWalletData } = useContext(ContextApi)
   return (
-    <View className="bg-[#171A25] h-[100vh]">
-      <Gradient>
+    <View className="bg-[#42a1ff] h-[100vh]">
 
       <SafeAreaView>
-        <StatusBar barStyle="light-content" backgroundColor={'#171A25'} />
+        <StatusBar barStyle="light-content" backgroundColor={'#40C9FF'} />
         <View className="flex flex-col">
           {userWalletData.publicAddress==='' ? (
             <CreateWallet />
@@ -23,7 +22,6 @@ const HomeScreen = () => {
        
         </View>
       </SafeAreaView>
-      </Gradient>
     
     </View>
   )

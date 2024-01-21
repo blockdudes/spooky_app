@@ -105,8 +105,8 @@ const UserWalletScreen = () => {
         <View
           style={
             Dimensions.get("screen").height < 668
-              ? { height: "75%" }
-              : { height: "50%" }
+              ? { height: "55%" }
+              : { height: "45%" }
           }
           className="shadow-xl bg-[#10131A]"
         >
@@ -156,10 +156,10 @@ const UserWalletScreen = () => {
                   <StableModal />
                   <RepayModal />
                 </View>
-                <View className="flex flex-row justify-around">
-                  {/* <CreditDelegation /> */}
-                  {/* <BorrowModal/> */}
-                </View>
+                {/* <View className="flex flex-row justify-around">
+                  <CreditDelegation />
+                  <BorrowModal/>
+                </View> */}
               </View>
             </View>
           </Gradient>

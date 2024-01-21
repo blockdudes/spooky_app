@@ -4,6 +4,7 @@ import { ContextApi } from '../providers/store'
 import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DoneAlert from './DoneAlert';
 // import { user_pvt_key } from '../utils/contracts';
 
 
@@ -66,6 +67,7 @@ const CreateWallet = () => {
           </View>
         ) : (
           <>
+          <DoneAlert />
             <View className="h-[55%]  flex justify-center" >
               <Image
                 className="h-[300px]  w-[300px] object-cover self-center mt-8"
