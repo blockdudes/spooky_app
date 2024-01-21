@@ -15,6 +15,7 @@ import { sendEth, sendGho } from '../utils/send_token';
 import { provider } from '../utils/contracts';
 import { TxSuccessDialog } from './TxSuccessDialog';
 import { TxFailedDialog } from './TxFailedDialog';
+import { TxDialog } from './TxDialog';
 
 
 
@@ -26,20 +27,22 @@ const PayModal = () => {
 
   const [isTxSuccess, setIsTxSuccess] = useState(false)
   const [isTxFailed, setIsTxFailed] = useState(false)
+  const [status, setStatus] = useState(0)
 
 
   const sendEthToken = async () => {
     setIsLoading(true)
+    setStatus(1)
     try {
       const txnRes = await sendEth(signer, sendTokenData.sendTo, sendTokenData.amount.toString())
       setIsLoading(false)
+      setStatus(2)
       if(txnRes){
-        
         successToast("Token sent successfully")
-        
       }
     } catch (error) {
       errorToast(error.message)
+      setStatus(3)
       setIsLoading(false)
       console.log(error)
       
@@ -48,13 +51,16 @@ const PayModal = () => {
 
   const sendGhoToken = async () => {
       setIsLoading(true)
-      setIsTxSuccess(true)
+      // setIsTxSuccess(true)
+      setStatus(1)
     try {
       const txnRes = await sendGho(signer, ghoContract, sendTokenData.sendTo, sendTokenData.amount.toString())
+      setStatus(2)
       setIsLoading(false)
       successToast("Token sent successfully")
     } catch (error) {
       setIsLoading(false)
+      setStatus(3)
       console.log(error)
       errorToast(error.message)
     }
@@ -73,16 +79,15 @@ const PayModal = () => {
     <SafeAreaView>
 
       <View>
+      {/* <TxSuccessDialog visible={isTxSuccess} setVisible={setIsTxSuccess}/>
+      <TxFailedDialog visible={isTxFailed} setVisible={setIsTxFailed}/> */}
 
-      <TxSuccessDialog visible={isTxSuccess} setVisible={setIsTxSuccess}/>
-      <TxFailedDialog visible={isTxFailed} setVisible={setIsTxFailed}/>
         <View className="flex items-center space-y-2 mr-4">
           <TouchableOpacity className=" bg-[#7264FF] w-[70px] flex items-center  rounded-2xl py-4 px-5" onPress={() => setModalVisible(true)}>
             <FontAwesome name="send" size={20} color="white" />
           </TouchableOpacity>
           <Text className="text-white  ">Send</Text>
         </View>
-
         <Modal
           animationType="slide"
           transparent={false}
@@ -90,6 +95,7 @@ const PayModal = () => {
         >
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
             <Toast position='bottom' bottomOffset={80} config={toastConfig} />
+        <TxDialog status={status} setStatus={setStatus}/>
 
             {/* top div */}
             <View className=" px-6 flex flex-row justify-between items-center">
@@ -160,8 +166,8 @@ const PayModal = () => {
                   <Text className="text-xl text-center font-semibold  text-[#10131a]">Sending..</Text>
                 </TouchableOpacity>
                 ):(
-                  <TouchableOpacity onPress={() => handleSendTokenBtn()} className=" rounded-[30px] bg-[#9fa1a3]/70 py-4">
-                  <Text className="text-xl text-center font-semibold  text-[#10131a]">Send</Text>
+                  <TouchableOpacity onPress={() => handleSendTokenBtn()} className=" rounded-[30px] bg-white py-4">
+                  <Text className="text-xl text-center font-semibold  text-black">Send</Text>
                 </TouchableOpacity>
                 )}
               </View>

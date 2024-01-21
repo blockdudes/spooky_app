@@ -11,6 +11,7 @@ import { stablizeTokens } from '../utils/stablize_tokens';
 import { errorToast } from '../config/CallToast';
 import { toastConfig } from '../config/toastConfig';
 import Toast from "react-native-toast-message"
+import { TxDialog } from './TxDialog';
 
 
 
@@ -20,12 +21,14 @@ const StableModal = () => {
   const [receiveAmount, setReceiveAmount] = useState("0")
   const {userWalletData,ghoPriceEth,signer, ethPrice, ghoPrice} = useContext(ContextApi)
   const [isLoading,setIsLoading]=useState(false)
+  const [status, setStatus] = useState(0)
 
   console.log(payAmount)
 
 
   const stabilizeEthToken=async()=>{
     setIsLoading(true)
+    setStatus(1)
     try {
       
       console.log("stabilize--->")
@@ -34,11 +37,15 @@ const StableModal = () => {
 
       setIsLoading(false)
       if(txnRes){
+        setStatus(2)
         successToast("Eth stabilized successfully")
-      }      
+      }   else{
+        setStatus(3)
+      }   
     } catch (error) {
       setIsLoading(false)
       console.log(error)
+      setStatus(3)
       errorToast(error.message)
     }
   }
@@ -67,6 +74,7 @@ console.log(ghoPriceEth)
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
           <Toast position='bottom' bottomOffset={80} config={toastConfig} />
 
+          <TxDialog status={status} setStatus={setStatus}/>
 
 
             {/* top div */}

@@ -11,6 +11,7 @@ import { supply } from '../utils/lend_tokens';
 import { errorToast, successToast } from '../config/CallToast';
 import { toastConfig } from '../config/toastConfig';
 import Toast from "react-native-toast-message"
+import { TxDialog } from './TxDialog';
 
 
 
@@ -23,22 +24,29 @@ const LendingModal = () => {
   const { signer, selectedLendToken, setSelectedLendToken, panelRef, ethPrice, ghoPrice, userWalletData, lendData, setLendData } = useContext(ContextApi)
   console.log(payAmount)
   console.log(selectedLendToken)
+  const [status, setStatus] = useState(0)
 
 
 
   const lendEthToken = async () => {
     setIsLoading(true)
+    setStatus(1)
     try {
       const txnRes = await supply(userWalletData.publicAddress, lendData.amount, signer, lendData.optionalAddress)
       setIsLoading(false)
       if(txnRes){
+        setStatus(2)
 
         successToast("Token lend successfully")
+      }else{
+        setStatus(3)
+
       }
     } catch (error) {
       setIsLoading(false)
       errorToast(error.message)
       console.log("helo--->",error)
+      setStatus(3)
 
     }
   }
@@ -68,6 +76,7 @@ const LendingModal = () => {
         >
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
           <Toast position='bottom' bottomOffset={80} config={toastConfig} />
+          <TxDialog status={status} setStatus={setStatus}/>
 
 
             {/* top div */}

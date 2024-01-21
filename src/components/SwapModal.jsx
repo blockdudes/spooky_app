@@ -16,6 +16,7 @@ import { toastConfig } from '../config/toastConfig';
 
 
 import { FontAwesome } from '@expo/vector-icons';
+import { TxDialog } from './TxDialog';
 
 const SwapModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,6 +24,7 @@ const SwapModal = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { selectedPayToken, ethPrice, ghoPrice, setSelectedPayToken, selectedRecieveToken, setSelectedRecieveToken, setActiveTask, panelRef, swapData, setSwapData, routerContract, signer, ghoContract } = useContext(ContextApi)
 
+  const [status, setStatus] = useState(0)
 
   useEffect(() => {
     const getOutPrice = async () => {
@@ -54,6 +56,7 @@ const SwapModal = () => {
 
   const swapEthToGho = async () => {
     setIsLoading(true)
+    setStatus(1)
     try {
       const txn=await swapETHForExactTokens(
         routerContract,
@@ -63,12 +66,14 @@ const SwapModal = () => {
       )
       if(txn){
         setIsLoading(false)
-        successToast("Token swapped successfully")
+    setStatus(2)
+    successToast("Token swapped successfully")
       }
     } catch (error) {
       setIsLoading(false)
       console.log(error)
       errorToast(error.message)
+      setStatus(3)
     }
   }
 
@@ -76,6 +81,7 @@ const SwapModal = () => {
   const swapGhoToEth = async () => {
 
     try {
+      setStatus(1)
       setIsLoading(true)
       const txn = await swapTokensForEth(
         ghoContract,
@@ -86,6 +92,7 @@ const SwapModal = () => {
       )
       if (txn) {
         setIsLoading(false)
+        setStatus(2)
         successToast("Token swapped successfully")
       }
 
@@ -93,6 +100,7 @@ const SwapModal = () => {
       setIsLoading(false)
       console.log(error)
       errorToast(error.message)
+      setStatus(3)
 
     }
 
@@ -127,6 +135,7 @@ const SwapModal = () => {
           <View className='bg-[#171A25] flex pt-12 flex-col h-[100vh]'>
           <Toast position='bottom' bottomOffset={80} config={toastConfig} />
 
+          <TxDialog status={status} setStatus={setStatus}/>
 
 
             {/* top div */}
